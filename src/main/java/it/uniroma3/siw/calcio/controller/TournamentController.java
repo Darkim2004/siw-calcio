@@ -1,0 +1,29 @@
+package it.uniroma3.siw.calcio.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import it.uniroma3.siw.calcio.service.TournamentService;
+
+@Controller
+public class TournamentController {
+
+    TournamentService tournamentService;
+
+    public TournamentController(TournamentService tournamentService) {
+        this.tournamentService = tournamentService;
+    }
+
+    @GetMapping("/tournaments")
+    public String getTournaments() {
+        return "tournament/list";
+    }
+
+    @GetMapping("/tournaments/{id}")
+    public String getTournament(@PathVariable Long id, Model model) {
+        model.addAttribute("tournament", tournamentService.findById(id));
+        return "tournament/detail";
+    }
+}
