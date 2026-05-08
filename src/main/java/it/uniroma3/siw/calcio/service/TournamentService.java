@@ -1,5 +1,8 @@
 package it.uniroma3.siw.calcio.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import it.uniroma3.siw.calcio.model.Torneo;
@@ -16,5 +19,9 @@ public class TournamentService {
 
     public Torneo findById(Long id) {
         return this.torneoRepository.findById(id).orElse(null);
+    }
+
+    public List<Torneo> findAll() {
+        return (List<Torneo>) torneoRepository.findAll();
     }
 }

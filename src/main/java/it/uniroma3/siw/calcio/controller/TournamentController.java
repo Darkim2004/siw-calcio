@@ -21,6 +21,11 @@ public class TournamentController {
         return "tournament/list";
     }
 
+    @GetMapping("/tournaments/form")
+    public String getTournamentForm() {
+        return "tournament/form";
+    }
+
     @GetMapping("/tournaments/{id}")
     public String getTournament(@PathVariable Long id, Model model) {
         model.addAttribute("tournament", tournamentService.findById(id));
