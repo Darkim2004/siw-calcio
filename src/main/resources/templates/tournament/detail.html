@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:text="${tournament != null ? tournament.nome : 'Dettaglio torneo'}">Dettaglio torneo</title>
+	<style>
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+			margin: 0;
+			padding: 32px;
+			background: #f4f1ea;
+			color: #1f2937;
+		}
+
+		.card {
+			max-width: 800px;
+			margin: 0 auto;
+			background: #fff;
+			border-radius: 20px;
+			padding: 32px;
+			border: 1px solid #d8d2c4;
+		}
+
+		a {
+			color: #14532d;
+			text-decoration: none;
+			font-weight: 700;
+		}
+
+		.meta {
+			margin: 16px 0 0;
+			color: #6b7280;
+		}
+	</style>
+</head>
+<body>
+	<main class="card" th:if="${tournament != null}">
+		<h1 th:text="${tournament.nome}">Nome torneo</h1>
+		<p class="meta"><strong>Anno:</strong> <span th:text="${tournament.anno}">2026</span></p>
+		<p class="meta"><strong>Descrizione:</strong> <span th:text="${tournament.descrizione}">Descrizione torneo</span></p>
+		<p><a th:href="@{/}">Torna alla homepage</a></p>
+	</main>
+
+	<main class="card" th:if="${tournament == null}">
+		<h1>Torneo non trovato</h1>
+		<p><a th:href="@{/}">Torna alla homepage</a></p>
+	</main>
+</body>
+</html>
