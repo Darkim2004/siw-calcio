@@ -19,8 +19,8 @@ public class Tournament {
     private String description;
 
     @Lazy
-    @ManyToMany(mappedBy = "tournaments")
-    private List<Team> teams;
+    @OneToMany(mappedBy = "tournament")
+    private List<Partecipation> partecipations;
 
     public Tournament() {
     }
@@ -61,12 +61,12 @@ public class Tournament {
         this.description = description;
     }
 
-    public List<Team> getTeams() {
-        return teams;
+    public List<Partecipation> getPartecipations() {
+        return partecipations;
     }
 
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
+    public void setPartecipations(List<Partecipation> partecipations) {
+        this.partecipations = partecipations;
     }
 
     @Override

@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 
@@ -27,8 +26,8 @@ public class Team {
     private String city;
 
     @Lazy
-    @ManyToMany
-    private List<Tournament> tournaments;
+    @OneToMany(mappedBy = "team")
+    private List<Partecipation> partecipations;
 
     @Lazy
     @OneToMany(mappedBy = "team")
@@ -66,12 +65,12 @@ public class Team {
         this.city = city;
     }
 
-    public List<Tournament> getTournaments() {
-        return tournaments;
+    public List<Partecipation> getPartecipations() {
+        return partecipations;
     }
 
-    public void setTournaments(List<Tournament> tournaments) {
-        this.tournaments = tournaments;
+    public void setPartecipations(List<Partecipation> partecipations) {
+        this.partecipations = partecipations;
     }
 
     public List<Player> getPlayers() {

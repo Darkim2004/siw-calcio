@@ -30,7 +30,9 @@ public class TournamentService {
     public List<Team> findTeamsByTournamentId(Long id) {
         Tournament tournament = this.findById(id);
         if (tournament != null) {
-            return tournament.getTeams();
+            return tournament.getPartecipations().stream()
+                    .map(partecipation -> partecipation.getTeam())
+                    .toList();
         }
         return null;
     }
