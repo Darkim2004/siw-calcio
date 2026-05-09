@@ -3,7 +3,7 @@ package it.uniroma3.siw.calcio.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import it.uniroma3.siw.calcio.service.TeamService;
 
@@ -16,9 +16,9 @@ public class TeamController {
         this.teamService = teamService;
     }
 
-    @GetMapping("teams/{id}")
-    public String getTeam(@RequestParam String id, Model model) {
-        model.addAttribute("team", this.teamService.findById(Long.valueOf(id)));
+    @GetMapping("/teams/{id}")
+    public String getTeam(@PathVariable Long id, Model model) {
+        model.addAttribute("team", this.teamService.findById(id));
         return "team/detail";
     }
     
