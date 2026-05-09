@@ -1,11 +1,302 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title th:text="${team != null ? team.name : 'Squadra non trovata'}">Dettaglio squadra</title>
+    <style>
+        :root {
+            --bg: #f4f1ea;
+            --surface: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --line: #d8d2c4;
+            --accent: #14532d;
+            --accent-hover: #0f3d20;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(180deg, #faf7f0 0%, var(--bg) 100%);
+            color: var(--text);
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .site-logo {
+            height: 72px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .login-button,
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .login-button {
+            background: var(--accent);
+            color: white;
+        }
+
+        .login-button:hover,
+        .back-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .login-button:hover {
+            background: var(--accent-hover);
+        }
+
+        .content {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(216, 210, 196, 0.8);
+            border-radius: 10px;
+            padding: 32px;
+            box-shadow: 0 18px 40px rgba(17, 24, 39, 0.08);
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .team-logo {
+            width: 120px;
+            height: 120px;
+            flex: 0 0 120px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            object-fit: contain;
+            padding: 14px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.4rem, 4vw, 3.6rem);
+            letter-spacing: 0.03em;
+        }
+
+        .team-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .meta-item {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.65);
+            color: var(--muted);
+        }
+
+        .meta-item strong {
+            color: var(--text);
+        }
+
+        .roster {
+            display: grid;
+            gap: 30px;
+            margin-top: 34px;
+        }
+
+        .role-section h2 {
+            margin: 0 0 16px;
+            font-size: 1.25rem;
+            color: var(--accent);
+        }
+
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .player-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: min(100%, 255px);
+            min-height: 92px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .player-photo {
+            width: 64px;
+            height: 64px;
+            flex: 0 0 64px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #f9f6ef;
+            border: 1px solid rgba(216, 210, 196, 0.8);
+        }
+
+        .player-name {
+            display: block;
+            color: var(--text);
+            font-weight: 700;
+            line-height: 1.25;
+            overflow-wrap: anywhere;
+        }
+
+        .player-info {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .empty-state {
+            margin: 0;
+            padding: 16px 0 0;
+            color: var(--muted);
+        }
+
+        .actions {
+            margin-top: 34px;
+        }
+
+        .back-button {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        .back-button:hover {
+            background: rgba(20, 83, 45, 0.08);
+        }
+
+        @media (max-width: 680px) {
+            .page {
+                padding: 18px;
+            }
+
+            .topbar {
+                margin-bottom: 28px;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            .team-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .team-logo {
+                width: 96px;
+                height: 96px;
+                flex-basis: 96px;
+            }
+
+            .player-card {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Ciao</h1>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <a class="login-button" th:href="@{/login}">Login</a>
+        </div>
+
+        <main class="content" th:if="${team != null}">
+            <section class="team-header">
+                <img class="team-logo"
+                     th:with="logoPath=${#strings.isEmpty(team.logo) ? '/images/SiwCalcio_logo.png' : team.logo}"
+                     th:src="@{${logoPath}}"
+                     th:alt="|Logo ${team.name}|">
+
+                <div>
+                    <h1 th:text="${team.name}">Nome squadra</h1>
+                    <div class="team-meta">
+                        <span class="meta-item" th:if="${!#strings.isEmpty(team.city)}">
+                            <strong>Citta:</strong>
+                            <span th:text="${team.city}">Roma</span>
+                        </span>
+                        <span class="meta-item" th:if="${team.foundationYear > 0}">
+                            <strong>Fondata:</strong>
+                            <span th:text="${team.foundationYear}">1927</span>
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="roster" th:if="${playersByRole != null and !playersByRole.isEmpty()}">
+                <div class="role-section" th:each="roleEntry : ${playersByRole}">
+                    <h2 th:text="${roleEntry.key}">Ruolo</h2>
+
+                    <div class="players-list" th:if="${not #lists.isEmpty(roleEntry.value)}">
+                        <article class="player-card" th:each="player : ${roleEntry.value}">
+                            <img class="player-photo"
+                                 th:with="photoPath=${#strings.isEmpty(player.photo) ? '/images/Portrait_Placeholder.png' : player.photo}"
+                                 th:src="@{${photoPath}}"
+                                 th:alt="|Foto ${player.firstName} ${player.lastName}|">
+                            <div>
+                                <span class="player-name" th:text="|${player.firstName} ${player.lastName}|">Nome giocatore</span>
+                                <span class="player-info" th:if="${player.height > 0}" th:text="|${player.height} cm|">180 cm</span>
+                            </div>
+                        </article>
+                    </div>
+
+                    <p class="empty-state" th:if="${#lists.isEmpty(roleEntry.value)}">Nessun giocatore in questa categoria.</p>
+                </div>
+            </section>
+
+            <p class="empty-state" th:if="${playersByRole == null or playersByRole.isEmpty()}">Nessun giocatore presente nella rosa.</p>
+
+            <div class="actions">
+                <a class="back-button" th:href="@{/}">Torna alla home</a>
+            </div>
+        </main>
+
+        <main class="content" th:if="${team == null}">
+            <h1>Squadra non trovata</h1>
+            <div class="actions">
+                <a class="back-button" th:href="@{/}">Torna alla home</a>
+            </div>
+        </main>
+    </div>
 </body>
 </html>

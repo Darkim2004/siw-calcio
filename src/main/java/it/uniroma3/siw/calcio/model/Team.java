@@ -25,6 +25,8 @@ public class Team {
     
     private String city;
 
+    private String logo;
+
     @Lazy
     @OneToMany(mappedBy = "team")
     private List<Partecipation> partecipations;
@@ -63,6 +65,14 @@ public class Team {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     public List<Partecipation> getPartecipations() {

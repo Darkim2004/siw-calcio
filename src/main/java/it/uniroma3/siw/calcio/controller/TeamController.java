@@ -1,10 +1,17 @@
 package it.uniroma3.siw.calcio.controller;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import it.uniroma3.siw.calcio.model.Player;
+import it.uniroma3.siw.calcio.model.RoleSoccer;
+import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.service.TeamService;
 
 
@@ -18,8 +25,26 @@ public class TeamController {
 
     @GetMapping("/teams/{id}")
     public String getTeam(@PathVariable Long id, Model model) {
-        model.addAttribute("team", this.teamService.findById(id));
+        Team team = this.teamService.findById(id);
+        model.addAttribute("team", team);
+
+        if (team != null) {
+            List<Player> players = this.teamService.findPlayersByTeamId(id);
+            Map<String, List<Player>> playersByRole = new LinkedHashMap<>();
+            playersByRole.put("Attaccanti", filterPlayersByRole(players, RoleSoccer.FORWARD));
+            playersByRole.put("Centrocampisti", filterPlayersByRole(players, RoleSoccer.MIDFIELDER));
+            playersByRole.put("Difensori", filterPlayersByRole(players, RoleSoccer.DEFENDER));
+            playersByRole.put("Portieri", filterPlayersByRole(players, RoleSoccer.GOALKEEPER));
+            model.addAttribute("playersByRole", playersByRole);
+        }
+
         return "team/detail";
+    }
+
+    private List<Player> filterPlayersByRole(List<Player> players, RoleSoccer role) {
+        return players.stream()
+                .filter(player -> role.equals(player.getRole()))
+                .toList();
     }
     
 }

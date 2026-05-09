@@ -29,6 +29,8 @@ public class Player {
     @Enumerated(EnumType.STRING)
     private RoleSoccer role;
 
+    private String photo;
+
     private int height;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -72,6 +74,14 @@ public class Player {
 
     public void setRole(RoleSoccer role) {
         this.role = role;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public int getHeight() {
