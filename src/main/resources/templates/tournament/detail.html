@@ -85,7 +85,8 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="teamData : ${teamsWithPoints}">
+							<tr th:each="teamData : ${teamsWithPoints}"
+							th:onclick="|window.location='@{/teams/{id}(id=${teamData[0].id})}'|">
 								<td th:text="${teamData[0].name}">Team name</td>
 								<td th:text="${teamData[1]}">0</td>
 							</tr>
