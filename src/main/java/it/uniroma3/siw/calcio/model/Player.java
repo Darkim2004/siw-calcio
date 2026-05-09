@@ -33,6 +33,8 @@ public class Player {
 
     private int height;
 
+    private int squadNumber;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private Team team;
 
@@ -90,6 +92,14 @@ public class Player {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public int getSquadNumber() {
+        return squadNumber;
+    }
+
+    public void setSquadNumber(int squadNumber) {
+        this.squadNumber = squadNumber;
     }
 
     public Team getTeam() {

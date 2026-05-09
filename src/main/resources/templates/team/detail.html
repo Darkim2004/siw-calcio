@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${team != null ? team.name : 'Squadra non trovata'}">Dettaglio squadra</title>
     <style>
+        @font-face {
+            font-family: 'Graduate';
+            src: url('/fonts/Graduate-Regular.ttf') format('truetype');
+        }
+
         :root {
             --bg: #f4f1ea;
             --surface: #ffffff;
@@ -177,9 +182,16 @@
 
         .player-info {
             display: block;
-            margin-top: 6px;
-            color: var(--muted);
-            font-size: 0.92rem;
+            width: fit-content;
+            margin-top: 5px;
+            color: #ffffff;
+            font-family: 'Graduate', Arial, Helvetica, sans-serif;
+            font-size: 1.05rem;
+            font-weight: 900;
+            letter-spacing: 0;
+            line-height: 1;
+            -webkit-text-stroke: 0.7px #000000;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
         }
 
         .empty-state {
@@ -275,7 +287,7 @@
                                  th:alt="|Foto ${player.firstName} ${player.lastName}|">
                             <div>
                                 <span class="player-name" th:text="|${player.firstName} ${player.lastName}|">Nome giocatore</span>
-                                <span class="player-info" th:if="${player.height > 0}" th:text="|${player.height} cm|">180 cm</span>
+                                <span class="player-info" th:if="${player.squadNumber > 0}" th:text="${player.squadNumber}">9</span>
                             </div>
                         </article>
                     </div>
