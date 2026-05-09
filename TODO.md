@@ -1,2 +1,3 @@
-- [ ] Add team detail.
 - [ ] Add last match points in the tournament detail page (ex: +3, -3, +1)
+- [ ] Add tournament list to see all the tournaments
+- [ ] Add match various view (Sito serie A è fatto bene)
