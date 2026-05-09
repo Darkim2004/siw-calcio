@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:text="${tournament != null ? tournament.nome : 'Dettaglio torneo'}">Dettaglio torneo</title>
+	<title th:text="${tournament != null ? tournament.name : 'Tournament detail'}">Tournament detail</title>
 	<style>
 		body {
 			font-family: Arial, Helvetica, sans-serif;
@@ -36,15 +36,15 @@
 </head>
 <body>
 	<main class="card" th:if="${tournament != null}">
-		<h1 th:text="${tournament.nome}">Nome torneo</h1>
-		<p class="meta"><strong>Anno:</strong> <span th:text="${tournament.anno}">2026</span></p>
-		<p class="meta"><strong>Descrizione:</strong> <span th:text="${tournament.descrizione}">Descrizione torneo</span></p>
-		<p><a th:href="@{/}">Torna alla homepage</a></p>
+		<h1 th:text="${tournament.name}">Tournament name</h1>
+		<p class="meta"><strong>Year:</strong> <span th:text="${tournament.year}">2026</span></p>
+		<p class="meta"><strong>Description:</strong> <span th:text="${tournament.description}">Tournament description</span></p>
+		<p><a th:href="@{/}">Back to home page</a></p>
 	</main>
 
 	<main class="card" th:if="${tournament == null}">
-		<h1>Torneo non trovato</h1>
-		<p><a th:href="@{/}">Torna alla homepage</a></p>
+		<h1>Tournament not found</h1>
+		<p><a th:href="@{/}">Back to home page</a></p>
 	</main>
 </body>
 </html>

@@ -1,6 +1,6 @@
 package it.uniroma3.siw.calcio.model;
 
-public enum StatoPartita {
+public enum MatchState {
     SCHEDULED,
     PLAYED
 }

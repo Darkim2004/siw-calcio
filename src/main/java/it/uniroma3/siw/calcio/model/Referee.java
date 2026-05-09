@@ -9,44 +9,44 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Arbitro {
+public class Referee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String nome;
-    private String cognome;
-    private int codiceArbitrale;
-    @OneToMany(mappedBy = "arbitro")
-    private List<Partita> partite;
+    private String firstName;
+    private String lastName;
+    private int refereeCode;
+    @OneToMany(mappedBy = "referee")
+    private List<Match> matches;
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
     }
-    public String getNome() {
-        return nome;
+    public String getFirstName() {
+        return firstName;
     }
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
-    public String getCognome() {
-        return cognome;
+    public String getLastName() {
+        return lastName;
     }
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
-    public int getCodiceArbitrale() {
-        return codiceArbitrale;
+    public int getRefereeCode() {
+        return refereeCode;
     }
-    public void setCodiceArbitrale(int codiceArbitrale) {
-        this.codiceArbitrale = codiceArbitrale;
+    public void setRefereeCode(int refereeCode) {
+        this.refereeCode = refereeCode;
     }
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + codiceArbitrale;
+        result = prime * result + refereeCode;
         return result;
     }
     @Override
@@ -57,8 +57,8 @@ public class Arbitro {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Arbitro other = (Arbitro) obj;
-        if (codiceArbitrale != other.codiceArbitrale)
+        Referee other = (Referee) obj;
+        if (refereeCode != other.refereeCode)
             return false;
         return true;
     }

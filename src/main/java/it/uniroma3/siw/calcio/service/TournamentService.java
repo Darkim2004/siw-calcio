@@ -4,23 +4,23 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import it.uniroma3.siw.calcio.model.Torneo;
-import it.uniroma3.siw.calcio.repository.TorneoRepository;
+import it.uniroma3.siw.calcio.model.Tournament;
+import it.uniroma3.siw.calcio.repository.TournamentRepository;
 
 @Service
 public class TournamentService {
 
-    private final TorneoRepository torneoRepository;
+    private final TournamentRepository tournamentRepository;
 
-    public TournamentService(TorneoRepository torneoRepository) {
-        this.torneoRepository = torneoRepository;
+    public TournamentService(TournamentRepository tournamentRepository) {
+        this.tournamentRepository = tournamentRepository;
     }
 
-    public Torneo findById(Long id) {
-        return this.torneoRepository.findById(id).orElse(null);
+    public Tournament findById(Long id) {
+        return this.tournamentRepository.findById(id).orElse(null);
     }
 
-    public List<Torneo> findAll() {
-        return (List<Torneo>) torneoRepository.findAll();
+    public List<Tournament> findAll() {
+        return (List<Tournament>) tournamentRepository.findAll();
     }
 }

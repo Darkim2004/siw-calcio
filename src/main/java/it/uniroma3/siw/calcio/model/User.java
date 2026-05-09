@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-public class Utente {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -18,7 +18,7 @@ public class Utente {
     @NotBlank
     private String password;
     @Enumerated(EnumType.STRING)
-    private RuoloSito ruolo;
+    private RoleWeb role;
     public Long getId() {
         return id;
     }
@@ -37,11 +37,11 @@ public class Utente {
     public void setPassword(String password) {
         this.password = password;
     }
-    public RuoloSito getRuolo() {
-        return ruolo;
+    public RoleWeb getRole() {
+        return role;
     }
-    public void setRuolo(RuoloSito ruolo) {
-        this.ruolo = ruolo;
+    public void setRole(RoleWeb role) {
+        this.role = role;
     }
     @Override
     public int hashCode() {
@@ -58,7 +58,7 @@ public class Utente {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Utente other = (Utente) obj;
+        User other = (User) obj;
         if (username == null) {
             if (other.username != null)
                 return false;

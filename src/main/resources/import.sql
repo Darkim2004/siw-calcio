@@ -1,6 +1,6 @@
--- Inserimento dati di test per i Tornei
-INSERT INTO torneo (id, nome, anno, descrizione) VALUES (nextval('torneo_seq'), 'Serie A 2025-2026', 2026, 'Il campionato italiano di calcio serie A');
-INSERT INTO torneo (id, nome, anno, descrizione) VALUES (nextval('torneo_seq'), 'Coppa Italia 2025-2026', 2026, 'La coppa nazionale italiana di calcio');
-INSERT INTO torneo (id, nome, anno, descrizione) VALUES (nextval('torneo_seq'), 'Champions League 2025-2026', 2026, 'Il torneo europeo piu prestigioso a livello di club');
-INSERT INTO torneo (id, nome, anno, descrizione) VALUES (nextval('torneo_seq'), 'Euro 2024', 2024, 'Campionato europeo di calcio');
-INSERT INTO torneo (id, nome, anno, descrizione) VALUES (nextval('torneo_seq'), 'Torneo Primavera 2025-2026', 2026, 'Campionato per le squadre giovanili');
+-- Test data for tournaments
+INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Serie A 2025-2026', 2026, 'Italian top division football league');
+INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Coppa Italia 2025-2026', 2026, 'Italian national cup competition');
+INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Champions League 2025-2026', 2026, 'Top European club tournament');
+INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Euro 2024', 2024, 'European national teams championship');
+INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Spring Tournament 2025-2026', 2026, 'Youth teams championship');
