@@ -3,7 +3,9 @@ package it.uniroma3.siw.calcio.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
 import it.uniroma3.siw.calcio.repository.TournamentRepository;
 
@@ -22,5 +24,14 @@ public class TournamentService {
 
     public List<Tournament> findAll() {
         return (List<Tournament>) tournamentRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Team> findTeamsByTournamentId(Long id) {
+        Tournament tournament = this.findById(id);
+        if (tournament != null) {
+            return tournament.getTeams();
+        }
+        return null;
     }
 }

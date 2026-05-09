@@ -2,6 +2,8 @@ package it.uniroma3.siw.calcio.model;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,9 +26,11 @@ public class Team {
     
     private String city;
 
+    @Lazy
     @ManyToMany
     private List<Tournament> tournaments;
 
+    @Lazy
     @OneToMany(mappedBy = "team")
     private List<Player> players;
 

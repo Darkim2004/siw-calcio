@@ -2,6 +2,7 @@ package it.uniroma3.siw.calcio.model;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -17,6 +18,7 @@ public class Tournament {
     private int year;
     private String description;
 
+    @Lazy
     @ManyToMany(mappedBy = "tournaments")
     private List<Team> teams;
 

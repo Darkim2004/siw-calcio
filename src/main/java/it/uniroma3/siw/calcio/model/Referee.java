@@ -1,12 +1,9 @@
 package it.uniroma3.siw.calcio.model;
 
-import java.util.List;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 
 @Entity
 public class Referee {
@@ -16,8 +13,6 @@ public class Referee {
     private String firstName;
     private String lastName;
     private int refereeCode;
-    @OneToMany(mappedBy = "referee")
-    private List<Match> matches;
     public Long getId() {
         return id;
     }

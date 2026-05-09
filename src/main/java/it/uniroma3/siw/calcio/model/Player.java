@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,7 +31,7 @@ public class Player {
 
     private int height;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Team team;
 
     public Long getId() {
