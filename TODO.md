@@ -1,0 +1,2 @@
+- [ ] Add team detail.
+- [ ] Add last match points in the tournament detail page (ex: +3, -3, +1)
