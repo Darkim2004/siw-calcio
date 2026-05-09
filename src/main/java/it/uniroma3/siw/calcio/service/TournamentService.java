@@ -26,12 +26,24 @@ public class TournamentService {
         return (List<Tournament>) tournamentRepository.findAll();
     }
 
+    // @Transactional(readOnly = true)
+    // public List<Team> findTeamsByTournamentId(Long id) {
+    //     Tournament tournament = this.findById(id);
+    //     if (tournament != null) {
+    //         return tournament.getPartecipations().stream()
+    //                 .map(partecipation -> partecipation.getTeam())
+    //                 .toList();
+    //     }
+    //     return null;
+    // }
+    
     @Transactional(readOnly = true)
-    public List<Team> findTeamsByTournamentId(Long id) {
+    public List<Object[]> findTeamsWithPointsByTournamentId(Long id) {
         Tournament tournament = this.findById(id);
         if (tournament != null) {
             return tournament.getPartecipations().stream()
-                    .map(partecipation -> partecipation.getTeam())
+                    .sorted((p1, p2) -> Integer.compare(p2.getPoints(), p1.getPoints()))
+                    .map(partecipation -> new Object[]{partecipation.getTeam(), partecipation.getPoints()})
                     .toList();
         }
         return null;

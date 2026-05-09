@@ -31,6 +31,41 @@
 		.meta {
 			margin: 16px 0 0;
 			color: #6b7280;
+		
+				.table-wrap {
+					overflow-x: auto;
+					margin-top: 32px;
+				}
+		
+				table {
+					width: 100%;
+					border-collapse: collapse;
+				}
+		
+				thead th {
+					text-align: left;
+					font-size: 0.85rem;
+					text-transform: uppercase;
+					letter-spacing: 0.08em;
+					color: #6b7280;
+					padding: 14px 18px;
+					border-bottom: 2px solid #d8d2c4;
+				}
+		
+				tbody td {
+					padding: 18px;
+					border-bottom: 1px solid #d8d2c4;
+				}
+		
+				tbody tr:hover {
+					background: #f9f6ef;
+				}
+		
+				.empty-state {
+					padding: 20px 0 8px;
+					color: #6b7280;
+					margin-top: 32px;
+				}
 		}
 	</style>
 </head>
@@ -39,6 +74,26 @@
 		<h1 th:text="${tournament.name}">Tournament name</h1>
 		<p class="meta"><strong>Year:</strong> <span th:text="${tournament.year}">2026</span></p>
 		<p class="meta"><strong>Description:</strong> <span th:text="${tournament.description}">Tournament description</span></p>
+		
+				<h2>Teams Standings</h2>
+				<div class="table-wrap" th:if="${not #lists.isEmpty(teamsWithPoints)}">
+					<table>
+						<thead>
+							<tr>
+								<th>Team</th>
+								<th>Points</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="teamData : ${teamsWithPoints}">
+								<td th:text="${teamData[0].name}">Team name</td>
+								<td th:text="${teamData[1]}">0</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<p class="empty-state" th:if="${#lists.isEmpty(teamsWithPoints)}">No teams are currently registered in this tournament.</p>
+		
 		<p><a th:href="@{/}">Back to home page</a></p>
 	</main>
 

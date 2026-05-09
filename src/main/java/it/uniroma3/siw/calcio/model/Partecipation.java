@@ -2,16 +2,29 @@ package it.uniroma3.siw.calcio.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Partecipation {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     @ManyToOne(fetch = FetchType.EAGER)
     private Tournament tournament;
     @ManyToOne(fetch = FetchType.EAGER)
     private Team team;
     private int points;
     
+        public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
     public Tournament getTournament() {
         return tournament;
     }
