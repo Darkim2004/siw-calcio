@@ -1,5 +1,6 @@
 package it.uniroma3.siw.calcio.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.EnumType;
@@ -16,8 +17,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotBlank
+    @Column(unique = true, nullable = false)
     private String username;
     @NotBlank
+    @Column(nullable = false)
     private String password;
     @Enumerated(EnumType.STRING)
     private RoleWeb role;
