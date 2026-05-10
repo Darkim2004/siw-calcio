@@ -81,6 +81,16 @@ h1 {
     margin-bottom: 24px;
 }
 
+.home-section + .home-section {
+    margin-top: 42px;
+    padding-top: 36px;
+    border-top: 1px solid var(--line);
+}
+
+.home-section > h1 {
+    margin-bottom: 24px;
+}
+
 h2 {
     margin: 34px 0 0;
     font-size: 1.25rem;
@@ -170,6 +180,112 @@ tbody td {
 .empty-state {
     margin: 16px 0 0;
     padding: 20px 0 8px;
+    color: var(--muted);
+}
+
+.match-calendar {
+    display: grid;
+    gap: 12px;
+}
+
+.match-row {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    align-items: stretch;
+    min-height: 92px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+    overflow: hidden;
+}
+
+.match-date {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    padding: 18px;
+    border-right: 1px solid var(--line);
+    background: #f9f6ef;
+}
+
+.match-day {
+    color: var(--text);
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.match-time {
+    color: var(--accent);
+    font-family: 'Graduate', Arial, Helvetica, sans-serif;
+    font-size: 1.08rem;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+.match-teams {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 86px minmax(0, 1fr);
+    align-items: center;
+    gap: 18px;
+    padding: 18px 22px;
+}
+
+.match-team {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.match-team-home {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.match-team-away {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.match-team-name {
+    min-width: 0;
+    color: var(--text);
+    font-weight: 800;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.match-team-logo {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    object-fit: contain;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    padding: 6px;
+}
+
+.match-center,
+.match-score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-family: 'Graduate', Arial, Helvetica, sans-serif;
+    font-size: 1.08rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    white-space: nowrap;
+}
+
+.match-score {
+    gap: 12px;
+    font-size: 1.35rem;
+}
+
+.score-separator {
     color: var(--muted);
 }
 
@@ -301,5 +417,36 @@ tbody td {
 
     .player-card {
         width: 100%;
+    }
+
+    .match-row {
+        grid-template-columns: 1fr;
+    }
+
+    .match-date {
+        align-items: center;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        text-align: center;
+    }
+
+    .match-teams {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .match-team-home,
+    .match-team-away {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .match-center,
+    .match-score {
+        order: 2;
+    }
+
+    .match-team-away {
+        order: 3;
     }
 }

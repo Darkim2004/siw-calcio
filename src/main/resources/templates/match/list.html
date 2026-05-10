@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matches</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <a class="login-button" th:href="@{/login}">Login</a>
+        </div>
+
+        <main class="content">
+            <h1>Matches</h1>
+
+            <div class="match-calendar" th:if="${not #lists.isEmpty(matches)}">
+                <article class="match-row" th:each="match : ${matches}">
+                    <div class="match-date">
+                        <span class="match-day" th:text="${match.dateTime.format(matchDateFormatter)}">lunedi 1 giugno</span>
+                        <span class="match-time" th:text="${match.dateTime.format(matchTimeFormatter)}">20:45</span>
+                    </div>
+
+                    <div class="match-teams">
+                        <div class="match-team match-team-home">
+                            <span class="match-team-name" th:text="${match.homeTeam.name}">Home team</span>
+                            <img class="match-team-logo"
+                                 th:with="homeLogo=${#strings.isEmpty(match.homeTeam.logo) ? '/images/SiwCalcio_logo.png' : match.homeTeam.logo}"
+                                 th:src="@{${homeLogo}}"
+                                 th:alt="|Logo ${match.homeTeam.name}|">
+                        </div>
+
+                        <div class="match-center" th:if="${match.state == null or match.state.name() != 'PLAYED'}">VS</div>
+                        <div class="match-score" th:if="${match.state != null and match.state.name() == 'PLAYED'}">
+                            <span th:text="${match.goalsHome}">0</span>
+                            <span class="score-separator">|</span>
+                            <span th:text="${match.goalsAway}">0</span>
+                        </div>
+
+                        <div class="match-team match-team-away">
+                            <img class="match-team-logo"
+                                 th:with="awayLogo=${#strings.isEmpty(match.awayTeam.logo) ? '/images/SiwCalcio_logo.png' : match.awayTeam.logo}"
+                                 th:src="@{${awayLogo}}"
+                                 th:alt="|Logo ${match.awayTeam.name}|">
+                            <span class="match-team-name" th:text="${match.awayTeam.name}">Away team</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <p class="empty-state" th:if="${#lists.isEmpty(matches)}">No matches are currently available.</p>
+
+            <div class="actions">
+                <a class="back-button" th:href="@{/}">Back to home page</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
