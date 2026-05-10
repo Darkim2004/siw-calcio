@@ -217,7 +217,6 @@ tbody td {
 
 .match-time {
     color: var(--accent);
-    font-family: 'Graduate', Arial, Helvetica, sans-serif;
     font-size: 1.08rem;
     font-weight: 900;
     letter-spacing: 0;

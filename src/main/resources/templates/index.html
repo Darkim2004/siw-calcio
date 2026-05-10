@@ -28,7 +28,7 @@
 
                         <div class="match-teams">
                             <div class="match-team match-team-home">
-                                <span class="match-team-name" th:text="${match.homeTeam.name}">Home team</span>
+                                <a class="match-team-name" th:href="@{/teams/{id}(id=${match.homeTeam.id})}" th:text="${match.homeTeam.name}">Home team</a>
                                 <img class="match-team-logo"
                                      th:with="homeLogo=${#strings.isEmpty(match.homeTeam.logo) ? '/images/SiwCalcio_logo.png' : match.homeTeam.logo}"
                                      th:src="@{${homeLogo}}"
@@ -47,7 +47,7 @@
                                      th:with="awayLogo=${#strings.isEmpty(match.awayTeam.logo) ? '/images/SiwCalcio_logo.png' : match.awayTeam.logo}"
                                      th:src="@{${awayLogo}}"
                                      th:alt="|Logo ${match.awayTeam.name}|">
-                                <span class="match-team-name" th:text="${match.awayTeam.name}">Away team</span>
+                                <a class="match-team-name" th:href="@{/teams/{id}(id=${match.awayTeam.id})}" th:text="${match.awayTeam.name}">Away team</a>
                             </div>
                         </div>
                     </article>
