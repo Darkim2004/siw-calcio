@@ -31,9 +31,15 @@
 					</thead>
 					<tbody>
 						<tr th:each="teamData : ${teamsWithPoints}"
+							th:with="lastPoints=${teamsWithLastPoints != null ? teamsWithLastPoints.get(teamData[0]) : 0}"
 							th:onclick="|window.location='@{/teams/{id}(id=${teamData[0].id})}'|">
 							<td th:text="${teamData[0].name}">Team name</td>
-							<td th:text="${teamData[1]}">0</td>
+							<td>
+								<span class="points-total" th:text="${teamData[1]}">0</span>
+								<span class="points-delta"
+									  th:classappend="${lastPoints == 3 ? ' points-delta-win' : (lastPoints == 1 ? ' points-delta-draw' : ' points-delta-loss')}"
+									  th:text="|+${lastPoints}|">-1</span>
+							</td>
 						</tr>
 					</tbody>
 				</table>

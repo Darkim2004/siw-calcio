@@ -172,6 +172,47 @@ tbody td {
     border-bottom: 1px solid var(--line);
 }
 
+.points-total {
+    display: inline-block;
+    min-width: 2ch;
+    font-weight: 800;
+}
+
+.points-delta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    margin-left: 10px;
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #f9f6ef;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 900;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.points-delta-win {
+    border-color: rgba(20, 83, 45, 0.25);
+    background: rgba(20, 83, 45, 0.1);
+    color: var(--accent);
+}
+
+.points-delta-draw {
+    border-color: rgba(107, 114, 128, 0.28);
+    background: rgba(107, 114, 128, 0.1);
+    color: #4b5563;
+}
+
+.points-delta-loss {
+    border-color: rgba(153, 27, 27, 0.2);
+    background: rgba(153, 27, 27, 0.08);
+    color: #991b1b;
+}
+
 .meta {
     margin: 16px 0 0;
     color: var(--muted);
