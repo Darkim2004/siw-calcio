@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import it.uniroma3.siw.calcio.model.Tournament;
-import it.uniroma3.siw.calcio.service.MatchService;
 import it.uniroma3.siw.calcio.service.TournamentService;
 
 @Controller
@@ -14,7 +13,7 @@ public class TournamentController {
 
     private TournamentService tournamentService;
 
-    public TournamentController(TournamentService tournamentService, MatchService matchService) {
+    public TournamentController(TournamentService tournamentService) {
         this.tournamentService = tournamentService;
     }
 

@@ -1,12 +1,12 @@
 package it.uniroma3.siw.calcio.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import it.uniroma3.siw.calcio.model.Match;
+import it.uniroma3.siw.calcio.model.MatchState;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
 import it.uniroma3.siw.calcio.repository.MatchRepository;
@@ -66,7 +66,7 @@ public class MatchService {
         }
         Match lastMatch = matches.stream()
                 .filter(match -> match.getDateTime() != null)
-                .filter(match -> match.getDateTime().isBefore(LocalDateTime.now()))
+                .filter(match -> MatchState.PLAYED.equals(match.getState()))
                 .max((m1, m2) -> m1.getDateTime().compareTo(m2.getDateTime()))
                 .orElse(null);
         if (lastMatch != null) {
