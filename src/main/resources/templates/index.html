@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tournaments</title>
+    <title>SiwHomepage</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -41,7 +41,7 @@
             <p class="empty-state" th:if="${#lists.isEmpty(tournaments)}">No tournaments are currently available.</p>
 
             <div class="actions">
-                <a class="add-button" th:href="@{/tournaments/form}">Add tournament</a>
+                <a class="add-button" th:if="${hasMoreTournaments}" th:href="@{/tournaments}">See more</a>
             </div>
         </main>
     </div>

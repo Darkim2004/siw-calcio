@@ -4,6 +4,7 @@ INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament
 INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Champions League 2025-2026', 2026, 'Top European club tournament');
 INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Euro 2024', 2024, 'European national teams championship');
 INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Spring Tournament 2025-2026', 2026, 'Youth teams championship');
+INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Summer Cup 2026', 2026, 'Summer football tournament');
 
 -- Test data for teams
 INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'AS Roma', 1927, 'Roma');

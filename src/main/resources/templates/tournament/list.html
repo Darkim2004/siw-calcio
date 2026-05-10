@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <a class="login-button" th:href="@{/login}">Login</a>
+        </div>
+
+        <main class="content">
+            <h1>Tournaments</h1>
+
+            <div class="table-wrap" th:if="${not #lists.isEmpty(tournaments)}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Year</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="tournament : ${tournaments}"
+                            th:onclick="|window.location='@{/tournaments/{id}(id=${tournament.id})}'|">
+                            <td th:text="${tournament.name}">Tournament name</td>
+                            <td th:text="${tournament.year}">2026</td>
+                            <td th:text="${tournament.description}">Tournament description</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="empty-state" th:if="${#lists.isEmpty(tournaments)}">No tournaments are currently available.</p>
+
+            <div class="actions">
+                <a class="add-button" th:href="@{/tournaments/form}">Add tournament</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
