@@ -14,6 +14,7 @@ import it.uniroma3.siw.calcio.service.MatchService;
 import it.uniroma3.siw.calcio.service.TournamentService;
 
 
+
 @Controller
 public class HomeController {
 
@@ -43,11 +44,4 @@ public class HomeController {
         model.addAttribute("matchTimeFormatter", MATCH_TIME_FORMATTER);
         return "index";
     }
-
-    @GetMapping("/login")
-    public String getLogin() {
-        return "login";
-    }
-    
-    
 }
