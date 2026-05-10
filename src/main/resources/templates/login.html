@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SIW Calcio</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo SIW Calcio">
+            </a>
+            <a class="back-button" th:href="@{/}">Home</a>
+        </div>
+
+        <main class="card auth-card">
+            <section class="auth-intro">
+                <span class="auth-kicker">Area riservata</span>
+                <h1>Login</h1>
+                <p class="meta">Accedi a SIW Calcio per gestire tornei, squadre e calendario delle partite.</p>
+            </section>
+
+            <section class="auth-panel" th:if="${userdetails == null}">
+                <div class="alert alert-error" th:if="${param.error}">
+                    Credenziali non valide. Controlla username e password.
+                </div>
+                <div class="alert alert-success" th:if="${param.logout}">
+                    Logout effettuato correttamente.
+                </div>
+
+                <form class="auth-form" th:action="@{/login}" method="post">
+                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                    <div class="form-field">
+                        <label for="username">Username</label>
+                        <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="password">Password</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required>
+                    </div>
+
+                    <button class="login-button auth-submit" type="submit">Accedi</button>
+                </form>
+            </section>
+
+            <section class="auth-panel" th:if="${userdetails != null}">
+                <p class="meta">Sei gia autenticato come <strong th:text="${userdetails.username}">utente</strong>.</p>
+                <div class="actions auth-actions">
+                    <a class="add-button" th:href="@{/}">Vai alla home</a>
+                    <form th:action="@{/logout}" method="post">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button class="back-button auth-link-button" type="submit">Logout</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
