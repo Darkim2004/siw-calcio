@@ -6,14 +6,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import it.uniroma3.siw.calcio.model.Tournament;
+import it.uniroma3.siw.calcio.service.MatchService;
 import it.uniroma3.siw.calcio.service.TournamentService;
 
 @Controller
 public class TournamentController {
 
-    TournamentService tournamentService;
+    private TournamentService tournamentService;
 
-    public TournamentController(TournamentService tournamentService) {
+    public TournamentController(TournamentService tournamentService, MatchService matchService) {
         this.tournamentService = tournamentService;
     }
 
@@ -33,6 +34,7 @@ public class TournamentController {
     public String getTournament(@PathVariable Long id, Model model) {
         model.addAttribute("tournament", tournamentService.findById(id));
         model.addAttribute("teamsWithPoints", tournamentService.findTeamsWithPointsByTournamentId(id));
+        model.addAttribute("teamsWithLastPoints", tournamentService.findTeamsWithLastPointsByTournamentId(id));
         return "tournament/detail";
     }
 }

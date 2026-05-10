@@ -1,10 +1,13 @@
 package it.uniroma3.siw.calcio.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
 import it.uniroma3.siw.calcio.repository.TournamentRepository;
 
@@ -12,9 +15,11 @@ import it.uniroma3.siw.calcio.repository.TournamentRepository;
 public class TournamentService {
 
     private final TournamentRepository tournamentRepository;
+    private final MatchService matchService;
 
-    public TournamentService(TournamentRepository tournamentRepository) {
+    public TournamentService(TournamentRepository tournamentRepository, MatchService matchService) {
         this.tournamentRepository = tournamentRepository;
+        this.matchService = matchService;
     }
 
     public Tournament findById(Long id) {
@@ -44,6 +49,19 @@ public class TournamentService {
                     .sorted((p1, p2) -> Integer.compare(p2.getPoints(), p1.getPoints()))
                     .map(partecipation -> new Object[]{partecipation.getTeam(), partecipation.getPoints()})
                     .toList();
+        }
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<Team, Integer> findTeamsWithLastPointsByTournamentId(Long id) {
+        Tournament tournament = this.findById(id);
+        if (tournament != null) {
+            return tournament.getPartecipations().stream()
+                    .collect(Collectors.toMap(
+                            partecipation -> (Team) partecipation.getTeam(),
+                            partecipation -> (Integer) matchService.findLastMatchPointsByTeamAndTournament(partecipation.getTeam(), tournament)
+                    ));
         }
         return null;
     }
