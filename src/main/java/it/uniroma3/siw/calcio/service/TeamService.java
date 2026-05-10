@@ -19,6 +19,7 @@ public class TeamService {
         this.teamRepository = teamRepository;
     }
 
+    @Transactional(readOnly = true)
     public Team findById(Long id) {
         return this.teamRepository.findById(id).orElse(null);
     }

@@ -24,7 +24,7 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public User save(User user) {
         user.setRole(RoleWeb.ROLE_USER);
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));

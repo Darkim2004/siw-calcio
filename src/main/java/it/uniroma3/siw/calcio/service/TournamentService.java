@@ -22,10 +22,12 @@ public class TournamentService {
         this.matchService = matchService;
     }
 
+    @Transactional(readOnly = true)
     public Tournament findById(Long id) {
         return this.tournamentRepository.findById(id).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public List<Tournament> findAll() {
         return (List<Tournament>) tournamentRepository.findAll();
     }

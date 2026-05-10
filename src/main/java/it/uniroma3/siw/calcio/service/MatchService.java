@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.uniroma3.siw.calcio.model.Match;
 import it.uniroma3.siw.calcio.model.MatchState;
@@ -24,18 +25,22 @@ public class MatchService {
         this.matchRepository = matchRepository;
     }
 
+    @Transactional(readOnly = true)
     public Match findById(Long id) {
         return this.matchRepository.findById(id).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public List<Match> findAll() {
         return (List<Match>) this.matchRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public int count() {
         return (int) this.matchRepository.count();
     }
 
+    @Transactional(readOnly = true)
     public List<Match> findAllSortedByDateTime() {
         List<Match> allMatches = this.findAll();
         return allMatches.stream()
@@ -44,6 +49,7 @@ public class MatchService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<Match> findTodayMatches() {
         LocalDate today = LocalDate.now();
         return this.findAll().stream()
@@ -53,12 +59,14 @@ public class MatchService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<Match> findFirstTodayMatches(int limit) {
         return this.findTodayMatches().stream()
                 .limit(limit)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public Integer findLastMatchPointsByTeamAndTournament(Team team, Tournament tournament) {
         List<Match> matches = this.matchRepository.findByTournamentAndTeam(tournament, team);
         if (matches.isEmpty()) {

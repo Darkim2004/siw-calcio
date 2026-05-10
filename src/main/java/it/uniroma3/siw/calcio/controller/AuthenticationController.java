@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import it.uniroma3.siw.calcio.model.User;
 import it.uniroma3.siw.calcio.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
 import jakarta.validation.Valid;
 
 @Controller
@@ -32,7 +34,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public String postRegister(@Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
+    public String postRegister(@Valid @ModelAttribute("user") User user,
+                               BindingResult bindingResult,
+                               HttpServletRequest request) throws ServletException {
         if (user.getUsername() != null
                 && !user.getUsername().isBlank()
                 && this.userService.findByUsername(user.getUsername()) != null) {
@@ -41,7 +45,9 @@ public class AuthenticationController {
         if (bindingResult.hasErrors()) {
             return "register";
         }
+        String rawPassword = user.getPassword();
         this.userService.save(user);
-        return "redirect:/login";
+        request.login(user.getUsername(), rawPassword);
+        return "redirect:/";
     }
 }
