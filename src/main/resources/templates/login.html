@@ -30,7 +30,7 @@
                     Logout effettuato correttamente.
                 </div>
 
-                <form class="auth-form" th:action="@{/login}" method="post">
+                <form class="auth-form" th:action="@{/perform-login}" method="post">
                     <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
                     <div class="form-field">
@@ -45,6 +45,10 @@
 
                     <button class="login-button auth-submit" type="submit">Accedi</button>
                 </form>
+
+                <p class="auth-switch">
+                    Non hai un account? <a th:href="@{/register}">Registrati</a>
+                </p>
             </section>
 
             <section class="auth-panel" th:if="${userdetails != null}">

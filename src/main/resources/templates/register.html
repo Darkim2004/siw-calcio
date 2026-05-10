@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrazione | SIW Calcio</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo SIW Calcio">
+            </a>
+            <a class="back-button" th:href="@{/login}">Login</a>
+        </div>
+
+        <main class="card auth-card">
+            <section class="auth-intro">
+                <span class="auth-kicker">Nuovo account</span>
+                <h1>Registrazione</h1>
+                <p class="meta">Crea un profilo per accedere all'area riservata di SIW Calcio.</p>
+            </section>
+
+            <section class="auth-panel">
+                <form class="auth-form" th:action="@{/register}" th:object="${user}" method="post">
+                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                    <div class="form-field">
+                        <label for="username">Username</label>
+                        <input id="username" th:field="*{username}" type="text" autocomplete="username" required autofocus>
+                        <span class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Errore username</span>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="password">Password</label>
+                        <input id="password" th:field="*{password}" type="password" autocomplete="new-password" required>
+                        <span class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Errore password</span>
+                    </div>
+
+                    <button class="login-button auth-submit" type="submit">Registrati</button>
+                </form>
+
+                <p class="auth-switch">
+                    Hai gia un account? <a th:href="@{/login}">Accedi</a>
+                </p>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -173,6 +173,13 @@ h2 {
     gap: 18px;
 }
 
+.auth-switch {
+    margin: 18px 0 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+    text-align: center;
+}
+
 .form-field {
     display: grid;
     gap: 8px;
@@ -199,6 +206,12 @@ h2 {
 .form-field input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.field-error {
+    color: #991b1b;
+    font-size: 0.9rem;
+    font-weight: 700;
 }
 
 .auth-submit {

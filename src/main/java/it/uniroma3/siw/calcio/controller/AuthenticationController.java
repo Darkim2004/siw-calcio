@@ -1,35 +1,23 @@
 package it.uniroma3.siw.calcio.controller;
 
 import org.springframework.validation.BindingResult;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import it.uniroma3.siw.calcio.model.User;
 import it.uniroma3.siw.calcio.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-
-import java.util.List;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @Controller
 public class AuthenticationController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationController(UserService userService, PasswordEncoder passwordEncoder) {
+    public AuthenticationController(UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/login")
@@ -38,25 +26,22 @@ public class AuthenticationController {
     }
     
     @GetMapping("/register")
-    public String getRegister() {
+    public String getRegister(Model model) {
+        model.addAttribute("user", new User());
         return "register";
     }
 
     @PostMapping("/register")
     public String postRegister(@Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
+        if (user.getUsername() != null
+                && !user.getUsername().isBlank()
+                && this.userService.findByUsername(user.getUsername()) != null) {
+            bindingResult.rejectValue("username", "duplicate", "Username gia in uso");
+        }
         if (bindingResult.hasErrors()) {
             return "register";
         }
         this.userService.save(user);
         return "redirect:/login";
     }
-
-    // @PostMapping("/login")
-    // public String postLogin(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, HttpServletRequest request) {
-    //     //TODO: process POST request
-        
-    //     return entity;
-    // }
-    
-
 }

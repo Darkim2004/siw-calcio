@@ -58,5 +58,4 @@ INSERT INTO match (id, date_time, venue, goals_home, goals_away, state, tourname
 INSERT INTO match (id, date_time, venue, goals_home, goals_away, state, tournament_id, home_team_id, away_team_id) VALUES (nextval('match_seq'), CURRENT_DATE + INTERVAL '1 day' + TIME '20:45', 'Allianz Stadium', 0, 0, 'SCHEDULED', (SELECT id FROM tournament WHERE name = 'Serie A 2025-2026' AND year = 2026), (SELECT id FROM team WHERE name = 'Juventus'), (SELECT id FROM team WHERE name = 'Inter'));
 
 -- Test data for users
-insert into credentials (id, username, password, role) values(nextval('credentials_seq'), 'admin', '$2a$12$HG5hCSR.QQlvgxvhrbX3Buj7.RddEEQWextrnSLqzq0HaJ3EAI.7O', 'ADMIN');
-
+INSERT INTO app_user (id, username, password, role) VALUES (nextval('app_user_seq'), 'admin', '$2a$12$HG5hCSR.QQlvgxvhrbX3Buj7.RddEEQWextrnSLqzq0HaJ3EAI.7O', 'ROLE_ADMIN');

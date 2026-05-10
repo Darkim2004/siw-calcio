@@ -26,7 +26,7 @@ public class UserService {
 
     @Transactional
     public User save(User user) {
-        user.setRole(RoleWeb.USER);
+        user.setRole(RoleWeb.ROLE_USER);
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         return this.userRepository.save(user);
     }

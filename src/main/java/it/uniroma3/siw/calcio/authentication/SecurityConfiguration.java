@@ -42,12 +42,13 @@ public class SecurityConfiguration {
             authorize.requestMatchers(HttpMethod.GET, "/", "/index", "/matches", "/matches/**",
                     "/teams", "/teams/**", "/tournaments", "/tournaments/**", "/login", "/register",
                 "/css/**", "/fonts/**", "/images/**").permitAll();
-            authorize.requestMatchers(HttpMethod.POST, "/register", "/login").permitAll();
+            authorize.requestMatchers(HttpMethod.POST, "/register", "/perform-login").permitAll();
             authorize.requestMatchers("/admin/**").hasRole("ADMIN");
             authorize.anyRequest().authenticated();
         });
         http.formLogin(form -> {
             form.loginPage("/login").permitAll();
+            form.loginProcessingUrl("/perform-login");
             form.failureUrl("/login?error=true");
         });
         http.logout(logout -> {
