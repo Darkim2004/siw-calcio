@@ -111,7 +111,16 @@ public class AdminController {
     }
 
     @PostMapping("/matches")
-    public String createMatch(@Valid @ModelAttribute("match") Match match, BindingResult bindingResult, Model model) {
+    public String createMatch(@Valid @ModelAttribute("match") Match match,
+                              BindingResult bindingResult,
+                              @RequestParam(required = false) Long homeTeamId,
+                              @RequestParam(required = false) Long awayTeamId,
+                              @RequestParam(required = false) Long tournamentId,
+                              @RequestParam(required = false) Long refereeId,
+                              Model model) {
+        setMatchRelations(match, homeTeamId, awayTeamId, tournamentId, refereeId);
+        validateMatchRelations(match, refereeId, bindingResult);
+
         if (bindingResult.hasErrors()) {
             addMatchFormAttributes(model);
             return "admin/match/form";
@@ -143,25 +152,8 @@ public class AdminController {
                               @RequestParam(required = false) Long refereeId, // All optional so we can give back the errors without a 400 bad request
                               Model model) {
         formMatch.setId(id); // if the id's not set, when it has errors the url breaks
-        Team homeTeam = findTeamById(homeTeamId);
-        Team awayTeam = findTeamById(awayTeamId);
-        Tournament tournament = findTournamentById(tournamentId);
-        Referee referee = findRefereeById(refereeId);
-
-        formMatch.setHomeTeam(homeTeam);
-        formMatch.setAwayTeam(awayTeam);
-        formMatch.setTournament(tournament);
-        formMatch.setReferee(referee);
-
-        if (homeTeam == null || awayTeam == null || tournament == null) {
-            bindingResult.reject("match.requiredData");
-        }
-        if (homeTeam != null && awayTeam != null && homeTeam.getId().equals(awayTeam.getId())) {
-            bindingResult.reject("match.sameTeams");
-        }
-        if (refereeId != null && referee == null) {
-            bindingResult.reject("match.invalidReferee");
-        }
+        setMatchRelations(formMatch, homeTeamId, awayTeamId, tournamentId, refereeId);
+        validateMatchRelations(formMatch, refereeId, bindingResult);
 
         if (bindingResult.hasErrors()) {
             addMatchFormAttributes(model);
@@ -202,6 +194,28 @@ public class AdminController {
         model.addAttribute("tournaments", tournamentService.findAll());
         model.addAttribute("referees", refereeService.findAll());
         model.addAttribute("matchStates", MatchState.values());
+    }
+
+    private void setMatchRelations(Match match, Long homeTeamId, Long awayTeamId, Long tournamentId, Long refereeId) {
+        match.setHomeTeam(findTeamById(homeTeamId));
+        match.setAwayTeam(findTeamById(awayTeamId));
+        match.setTournament(findTournamentById(tournamentId));
+        match.setReferee(findRefereeById(refereeId));
+    }
+
+    private void validateMatchRelations(Match match, Long refereeId, BindingResult bindingResult) {
+        Team homeTeam = match.getHomeTeam();
+        Team awayTeam = match.getAwayTeam();
+
+        if (homeTeam == null || awayTeam == null || match.getTournament() == null) {
+            bindingResult.reject("match.requiredData");
+        }
+        if (homeTeam != null && awayTeam != null && homeTeam.getId().equals(awayTeam.getId())) {
+            bindingResult.reject("match.sameTeams");
+        }
+        if (refereeId != null && match.getReferee() == null) {
+            bindingResult.reject("match.invalidReferee");
+        }
     }
 
     private Team findTeamById(Long id) {

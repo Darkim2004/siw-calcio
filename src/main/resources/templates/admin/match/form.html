@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>New match</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="page">
+		<div class="topbar">
+			<a th:href="@{/}">
+				<img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+			</a>
+			<form th:action="@{/logout}" method="post">
+				<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<button class="login-button" type="submit">Logout</button>
+			</form>
+		</div>
+
+		<main class="card">
+			<h1>Create a new match</h1>
+
+			<form class="auth-form" th:action="@{/admin/matches}" th:object="${match}" method="post">
+				<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+				<div class="alert alert-error" th:if="${#fields.hasGlobalErrors()}">
+					<p th:each="error : ${#fields.globalErrors()}" th:text="${error}">Match error</p>
+				</div>
+
+				<div class="form-field">
+					<label for="homeTeamId">Home team</label>
+					<select id="homeTeamId" name="homeTeamId" required>
+						<option value="">Select home team</option>
+						<option th:each="team : ${teams}"
+								th:value="${team.id}"
+								th:text="${team.name}"
+								th:selected="${match.homeTeam != null and match.homeTeam.id == team.id}">Home team</option>
+					</select>
+				</div>
+
+				<div class="form-field">
+					<label for="awayTeamId">Away team</label>
+					<select id="awayTeamId" name="awayTeamId" required>
+						<option value="">Select away team</option>
+						<option th:each="team : ${teams}"
+								th:value="${team.id}"
+								th:text="${team.name}"
+								th:selected="${match.awayTeam != null and match.awayTeam.id == team.id}">Away team</option>
+					</select>
+				</div>
+
+				<div class="form-field">
+					<label for="tournamentId">Tournament</label>
+					<select id="tournamentId" name="tournamentId" required>
+						<option value="">Select tournament</option>
+						<option th:each="tournament : ${tournaments}"
+								th:value="${tournament.id}"
+								th:text="${tournament.name}"
+								th:selected="${match.tournament != null and match.tournament.id == tournament.id}">Tournament</option>
+					</select>
+				</div>
+
+				<div class="form-field">
+					<label for="refereeId">Referee</label>
+					<select id="refereeId" name="refereeId">
+						<option value="">No referee selected</option>
+						<option th:each="referee : ${referees}"
+								th:value="${referee.id}"
+								th:text="|${referee.firstName} ${referee.lastName}|"
+								th:selected="${match.referee != null and match.referee.id == referee.id}">Referee</option>
+					</select>
+				</div>
+
+				<div class="form-field">
+					<label for="dateTime">Date and time</label>
+					<input id="dateTime" type="datetime-local" th:field="*{dateTime}" required>
+					<span class="field-error" th:if="${#fields.hasErrors('dateTime')}" th:errors="*{dateTime}">Date error</span>
+				</div>
+
+				<div class="form-field">
+					<label for="venue">Venue</label>
+					<input id="venue" type="text" th:field="*{venue}">
+					<span class="field-error" th:if="${#fields.hasErrors('venue')}" th:errors="*{venue}">Venue error</span>
+				</div>
+
+				<div class="form-field">
+					<label for="state">State</label>
+					<select id="state" th:field="*{state}">
+						<option value="">Select state</option>
+						<option th:each="state : ${matchStates}"
+								th:value="${state}"
+								th:text="${state}">SCHEDULED</option>
+					</select>
+					<span class="field-error" th:if="${#fields.hasErrors('state')}" th:errors="*{state}">State error</span>
+				</div>
+
+				<div class="form-actions">
+					<div class="form-field score-field">
+						<label for="goalsHome">Home goals</label>
+						<input id="goalsHome" type="number" th:field="*{goalsHome}" min="0">
+						<span class="field-error" th:if="${#fields.hasErrors('goalsHome')}" th:errors="*{goalsHome}">Home goals error</span>
+					</div>
+
+					<div class="form-field score-field">
+						<label for="goalsAway">Away goals</label>
+						<input id="goalsAway" type="number" th:field="*{goalsAway}" min="0">
+						<span class="field-error" th:if="${#fields.hasErrors('goalsAway')}" th:errors="*{goalsAway}">Away goals error</span>
+					</div>
+				</div>
+
+				<div class="form-actions">
+					<button class="add-button form-submit" type="submit">Create match</button>
+					<a class="back-button" th:href="@{/matches}">Back to matches</a>
+				</div>
+			</form>
+		</main>
+	</div>
+</body>
+</html>

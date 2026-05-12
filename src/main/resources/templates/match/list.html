@@ -62,8 +62,12 @@
 
             <p class="empty-state" th:if="${#lists.isEmpty(matches)}">No matches are currently available.</p>
 
-            <div class="actions">
+            <div class="actions detail-actions">
                 <a class="back-button" th:href="@{/}">Back to home page</a>
+
+                <div class="admin-actions" th:if="${isAdmin}">
+                    <a class="add-button" th:href="@{/admin/matches/new}">Add match</a>
+                </div>
             </div>
         </main>
     </div>
