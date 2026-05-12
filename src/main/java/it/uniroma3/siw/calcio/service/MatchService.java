@@ -40,6 +40,17 @@ public class MatchService {
         return (int) this.matchRepository.count();
     }
 
+    @Transactional
+    public Match save(Match match) {
+        return this.matchRepository.save(match);
+    }
+
+    @Transactional
+    public void delete(Match match) {
+        this.matchRepository.delete(match);
+    }
+
+
     @Transactional(readOnly = true)
     public List<Match> findAllSortedByDateTime() {
         List<Match> allMatches = this.findAll();
