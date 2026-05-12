@@ -140,7 +140,7 @@ public class AdminController {
                               @RequestParam(required = false) Long homeTeamId,
                               @RequestParam(required = false) Long awayTeamId,
                               @RequestParam(required = false) Long tournamentId,
-                              @RequestParam(required = false) Long refereeId,
+                              @RequestParam(required = false) Long refereeId, // All optional so we can give back the errors without a 400 bad request
                               Model model) {
         formMatch.setId(id); // if the id's not set, when it has errors the url breaks
         Team homeTeam = findTeamById(homeTeamId);
@@ -154,13 +154,13 @@ public class AdminController {
         formMatch.setReferee(referee);
 
         if (homeTeam == null || awayTeam == null || tournament == null) {
-            bindingResult.reject("match.requiredData", "Please select a home team, an away team, and a tournament.");
+            bindingResult.reject("match.requiredData");
         }
         if (homeTeam != null && awayTeam != null && homeTeam.getId().equals(awayTeam.getId())) {
-            bindingResult.reject("match.sameTeams", "Home team and away team must be different.");
+            bindingResult.reject("match.sameTeams");
         }
         if (refereeId != null && referee == null) {
-            bindingResult.reject("match.invalidReferee", "Please select a valid referee.");
+            bindingResult.reject("match.invalidReferee");
         }
 
         if (bindingResult.hasErrors()) {
