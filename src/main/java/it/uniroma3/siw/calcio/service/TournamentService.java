@@ -32,6 +32,11 @@ public class TournamentService {
         return (List<Tournament>) tournamentRepository.findAll();
     }
 
+    @Transactional
+    public Tournament save(Tournament tournament) {
+        return tournamentRepository.save(tournament);
+    }
+
     // @Transactional(readOnly = true)
     // public List<Team> findTeamsByTournamentId(Long id) {
     //     Tournament tournament = this.findById(id);

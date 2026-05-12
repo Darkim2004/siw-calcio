@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -15,6 +17,8 @@ public class Tournament {
     @NotBlank
     private String name;
 
+    @Min(1900)
+    @Max(2100)
     private int year;
     private String description;
 
