@@ -40,8 +40,8 @@
 
             <p class="empty-state" th:if="${#lists.isEmpty(tournaments)}">No tournaments are currently available.</p>
 
-            <div class="actions">
-                <a class="add-button" th:href="@{/tournaments/form}">Add tournament</a>
+            <div th:if="${isAdmin}"  class="actions">
+                <a class="add-button" th:href="@{/admin/tournaments/new}">Add tournament</a>
             </div>
         </main>
     </div>
