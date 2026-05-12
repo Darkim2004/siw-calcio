@@ -426,6 +426,10 @@ tbody td {
     overflow: hidden;
 }
 
+.match-row-manageable {
+    grid-template-columns: 170px minmax(0, 1fr) auto;
+}
+
 .match-date {
     display: flex;
     flex-direction: column;
@@ -455,6 +459,13 @@ tbody td {
     align-items: center;
     gap: 18px;
     padding: 18px 22px;
+}
+
+.match-admin-actions {
+    align-self: stretch;
+    padding: 18px;
+    border-left: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.55);
 }
 
 .match-team {
@@ -666,6 +677,14 @@ tbody td {
 
     .match-row {
         grid-template-columns: 1fr;
+    }
+
+    .match-admin-actions {
+        justify-content: center;
+        margin-left: 0;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        width: 100%;
     }
 
     .match-date {

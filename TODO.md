@@ -2,3 +2,4 @@
 - [ ] Adjust user login button when already logged in
 - [ ] Add comment things
 - [ ] Add error pages
+- [ ] What happens when you delete a tournament to the partecipation entities?

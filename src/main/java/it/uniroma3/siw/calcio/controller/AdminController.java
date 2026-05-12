@@ -96,13 +96,13 @@ public class AdminController {
     public String getMatchForm(Model model) {
         Match match = new Match();
         model.addAttribute("match", match);
-        return "admin/matches/form";
+        return "admin/match/form";
     }
 
     @PostMapping("/matches")
     public String createMatch(@Valid @ModelAttribute("match") Match match, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "admin/matches/form";
+            return "admin/match/form";
         }
 
         matchService.save(match);
@@ -117,14 +117,14 @@ public class AdminController {
         }
 
         model.addAttribute("match", match);
-        return "admin/matches/edit-form";
+        return "admin/match/edit-form";
     }
     
     @PostMapping("/matches/{id}")
     public String updateMatch(@PathVariable Long id, @Valid @ModelAttribute("match") Match formMatch, BindingResult bindingResult) {
         formMatch.setId(id); // if the id's not set, when it has errors the url breaks
         if (bindingResult.hasErrors()) {
-            return "admin/matches/edit-form";
+            return "admin/match/edit-form";
         }
 
         Match match = matchService.findById(id);

@@ -37,7 +37,7 @@
 							<td>
 								<span class="points-total" th:text="${teamData[1]}">0</span>
 								<span class="points-delta"
-									  th:classappend="${lastPoints == 3 ? ' points-delta-win' : (lastPoints == 1 ? ' points-delta-draw' : ' points-delta-loss')}"
+									  th:class="${lastPoints == 3 ? 'points-delta points-delta-win' : (lastPoints == 1 ? 'points-delta points-delta-draw' : 'points-delta points-delta-loss')}"
 									  th:text="|+${lastPoints}|">-1</span>
 							</td>
 						</tr>
