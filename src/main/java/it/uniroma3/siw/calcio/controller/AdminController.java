@@ -8,11 +8,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import it.uniroma3.siw.calcio.model.Match;
+import it.uniroma3.siw.calcio.model.MatchState;
+import it.uniroma3.siw.calcio.model.Referee;
+import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
 import it.uniroma3.siw.calcio.service.MatchService;
+import it.uniroma3.siw.calcio.service.RefereeService;
+import it.uniroma3.siw.calcio.service.TeamService;
 import it.uniroma3.siw.calcio.service.TournamentService;
 import jakarta.validation.Valid;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,10 +30,14 @@ public class AdminController {
 
     private final TournamentService tournamentService;
     private final MatchService matchService;
+    private final TeamService teamService;
+    private final RefereeService refereeService;
 
-    public AdminController(TournamentService tournamentService, MatchService matchService) {
+    public AdminController(TournamentService tournamentService, MatchService matchService, TeamService teamService, RefereeService refereeService) {
         this.tournamentService = tournamentService;
         this.matchService = matchService;
+        this.teamService = teamService;
+        this.refereeService = refereeService;
     }
 
     // ------------------ TOURNAMENTS -------------------
@@ -96,12 +106,14 @@ public class AdminController {
     public String getMatchForm(Model model) {
         Match match = new Match();
         model.addAttribute("match", match);
+        addMatchFormAttributes(model);
         return "admin/match/form";
     }
 
     @PostMapping("/matches")
-    public String createMatch(@Valid @ModelAttribute("match") Match match, BindingResult bindingResult) {
+    public String createMatch(@Valid @ModelAttribute("match") Match match, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            addMatchFormAttributes(model);
             return "admin/match/form";
         }
 
@@ -117,13 +129,42 @@ public class AdminController {
         }
 
         model.addAttribute("match", match);
+        addMatchFormAttributes(model);
         return "admin/match/edit-form";
     }
     
     @PostMapping("/matches/{id}")
-    public String updateMatch(@PathVariable Long id, @Valid @ModelAttribute("match") Match formMatch, BindingResult bindingResult) {
+    public String updateMatch(@PathVariable Long id,
+                              @Valid @ModelAttribute("match") Match formMatch,
+                              BindingResult bindingResult,
+                              @RequestParam(required = false) Long homeTeamId,
+                              @RequestParam(required = false) Long awayTeamId,
+                              @RequestParam(required = false) Long tournamentId,
+                              @RequestParam(required = false) Long refereeId,
+                              Model model) {
         formMatch.setId(id); // if the id's not set, when it has errors the url breaks
+        Team homeTeam = findTeamById(homeTeamId);
+        Team awayTeam = findTeamById(awayTeamId);
+        Tournament tournament = findTournamentById(tournamentId);
+        Referee referee = findRefereeById(refereeId);
+
+        formMatch.setHomeTeam(homeTeam);
+        formMatch.setAwayTeam(awayTeam);
+        formMatch.setTournament(tournament);
+        formMatch.setReferee(referee);
+
+        if (homeTeam == null || awayTeam == null || tournament == null) {
+            bindingResult.reject("match.requiredData", "Please select a home team, an away team, and a tournament.");
+        }
+        if (homeTeam != null && awayTeam != null && homeTeam.getId().equals(awayTeam.getId())) {
+            bindingResult.reject("match.sameTeams", "Home team and away team must be different.");
+        }
+        if (refereeId != null && referee == null) {
+            bindingResult.reject("match.invalidReferee", "Please select a valid referee.");
+        }
+
         if (bindingResult.hasErrors()) {
+            addMatchFormAttributes(model);
             return "admin/match/edit-form";
         }
 
@@ -143,7 +184,7 @@ public class AdminController {
         match.setReferee(formMatch.getReferee());
         
         matchService.save(match);
-        return "redirect:/matches/" + id;
+        return "redirect:/matches";
     }
 
     @PostMapping("/matches/{id}/delete")
@@ -154,5 +195,24 @@ public class AdminController {
         }
         matchService.delete(match);
         return "redirect:/matches";
+    }
+
+    private void addMatchFormAttributes(Model model) {
+        model.addAttribute("teams", teamService.findAll());
+        model.addAttribute("tournaments", tournamentService.findAll());
+        model.addAttribute("referees", refereeService.findAll());
+        model.addAttribute("matchStates", MatchState.values());
+    }
+
+    private Team findTeamById(Long id) {
+        return id == null ? null : teamService.findById(id);
+    }
+
+    private Tournament findTournamentById(Long id) {
+        return id == null ? null : tournamentService.findById(id);
+    }
+
+    private Referee findRefereeById(Long id) {
+        return id == null ? null : refereeService.findById(id);
     }
 }

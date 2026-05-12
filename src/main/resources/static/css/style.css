@@ -230,7 +230,8 @@ h2 {
     font-weight: 800;
 }
 
-.form-field input {
+.form-field input,
+.form-field select {
     width: 100%;
     min-height: 48px;
     border: 1px solid var(--line);
@@ -259,9 +260,14 @@ h2 {
 }
 
 .form-field input:focus,
+.form-field select:focus,
 .form-field textarea:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.score-field {
+    flex: 1 1 180px;
 }
 
 .field-error {

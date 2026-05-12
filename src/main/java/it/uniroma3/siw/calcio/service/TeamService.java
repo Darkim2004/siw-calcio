@@ -25,6 +25,11 @@ public class TeamService {
     }
 
     @Transactional(readOnly = true)
+    public List<Team> findAll() {
+        return (List<Team>) this.teamRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
     public List<Player> findPlayersByTeamId(Long id) {
         Team team = this.teamRepository.findById(id).orElse(null);
         if (team == null) {
