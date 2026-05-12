@@ -70,9 +70,10 @@ public class AdminController {
 
         tournament.setName(formTournament.getName());
         tournament.setYear(formTournament.getYear());
+        tournament.setDescription(formTournament.getDescription());
         
         tournamentService.save(tournament);
-        return "redirect:/tournaments";
+        return "redirect:/tournaments/" + id;
     }
 
     @PostMapping("/tournaments/{id}/delete")

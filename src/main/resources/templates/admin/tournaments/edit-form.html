@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:text="${tournament != null ? 'Edit ' + tournament.name : 'Edit tournament'}">Edit tournament</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="page">
+		<div class="topbar">
+			<a th:href="@{/}">
+				<img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+			</a>
+			<form th:action="@{/logout}" method="post">
+				<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<button class="login-button" type="submit">Logout</button>
+			</form>
+		</div>
+
+		<main class="card">
+			<h1>Edit tournament</h1>
+
+			<form class="auth-form"
+				  th:action="@{/admin/tournaments/{id}(id=${tournament.id})}"
+				  th:object="${tournament}"
+				  method="post">
+				<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+				<div class="form-field">
+					<label for="name">Name</label>
+					<input id="name" type="text" th:field="*{name}" required autofocus>
+					<span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</span>
+				</div>
+
+				<div class="form-field">
+					<label for="year">Year</label>
+					<input id="year" type="number" th:field="*{year}" min="1900" max="2100" required>
+					<span class="field-error" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Year error</span>
+				</div>
+
+				<div class="form-field">
+					<label for="description">Description</label>
+					<textarea id="description" th:field="*{description}" rows="5"></textarea>
+					<span class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description error</span>
+				</div>
+
+				<div class="form-actions">
+					<button class="add-button form-submit" type="submit">Save changes</button>
+					<a class="back-button" th:href="@{/tournaments/{id}(id=${tournament.id})}">Back to tournament</a>
+				</div>
+			</form>
+		</main>
+	</div>
+</body>
+</html>
