@@ -633,6 +633,100 @@ tbody td {
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
+.club-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.club-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    min-height: 220px;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.club-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
+}
+
+.club-heading h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.35rem;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.club-logo {
+    width: 72px;
+    height: 72px;
+    flex: 0 0 72px;
+    object-fit: contain;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+}
+
+.club-city {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    width: fit-content;
+    max-width: 100%;
+    padding: 8px 13px;
+    border: 1px solid rgba(20, 83, 45, 0.24);
+    border-radius: 999px;
+    background: rgba(20, 83, 45, 0.08);
+    color: var(--accent);
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.club-city::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border: 2px solid currentColor;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+}
+
+.club-city span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.club-info-button {
+    display: inline-block;
+    margin-top: auto;
+    padding: 11px 18px;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    color: var(--accent);
+    font-weight: 800;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.club-info-button:hover {
+    background: var(--accent-soft);
+    transform: translateY(-1px);
+}
+
 @media (max-width: 680px) {
     .page {
         padding: 18px;
@@ -679,6 +773,21 @@ tbody td {
 
     .player-card {
         width: 100%;
+    }
+
+    .club-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .club-card {
+        min-height: 0;
+        padding: 18px;
+    }
+
+    .club-logo {
+        width: 60px;
+        height: 60px;
+        flex-basis: 60px;
     }
 
     .match-row {

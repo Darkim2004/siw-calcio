@@ -89,6 +89,34 @@
                     <a class="add-button" th:if="${hasMoreTournaments}" th:href="@{/tournaments}">See more</a>
                 </div>
             </section>
+
+            <section class="home-section">
+                <h1>Clubs</h1>
+
+                <div class="club-grid" th:if="${not #lists.isEmpty(teams)}">
+                    <article class="club-card" th:each="team : ${teams}">
+                        <div class="club-heading">
+                            <img class="club-logo"
+                                 th:with="teamLogo=${#strings.isEmpty(team.logo) ? '/images/SiwCalcio_logo.png' : team.logo}"
+                                 th:src="@{${teamLogo}}"
+                                 th:alt="|Logo ${team.name}|">
+                            <h2 th:text="${team.name}">Team name</h2>
+                        </div>
+
+                        <div class="club-city" th:if="${!#strings.isEmpty(team.city)}">
+                            <span th:text="${team.city}">Roma</span>
+                        </div>
+
+                        <a class="club-info-button" th:href="@{/teams/{id}(id=${team.id})}">Club info</a>
+                    </article>
+                </div>
+
+                <p class="empty-state" th:if="${#lists.isEmpty(teams)}">No clubs are currently available.</p>
+
+                <div class="actions">
+                    <a class="add-button" th:if="${hasMoreTeams}" th:href="@{/teams}">See more</a>
+                </div>
+            </section>
         </main>
     </div>
 </body>

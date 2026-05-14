@@ -13,6 +13,8 @@ import it.uniroma3.siw.calcio.model.Player;
 import it.uniroma3.siw.calcio.model.RoleSoccer;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.service.TeamService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @Controller
@@ -40,6 +42,14 @@ public class TeamController {
 
         return "team/detail";
     }
+
+    @GetMapping("/teams")
+    public String getTeams(Model model) {
+         List<Team> teams = this.teamService.findAll();
+         model.addAttribute("teams", teams);
+        return "team/list";
+    }
+    
 
     private List<Player> filterPlayersByRole(List<Player> players, RoleSoccer role) {
         return players.stream()

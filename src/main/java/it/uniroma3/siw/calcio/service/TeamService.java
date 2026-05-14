@@ -37,4 +37,23 @@ public class TeamService {
         }
         return team.getPlayers();
     }
+
+    @Transactional
+    public Team save(Team team) {
+        return this.teamRepository.save(team);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Team> findFirstAlphabeticallyTeams(int limit) {
+        List<Team> teams = this.findAll();
+        return teams.stream()
+                .sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName()))
+                .limit(limit)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasMoreTeams(int limit) {
+        return this.findAll().size() > limit;
+    }
 }

@@ -52,6 +52,20 @@ public class TournamentService {
     //     }
     //     return null;
     // }
+
+    @Transactional(readOnly = true)
+    public List<Tournament> findFirstAlphabeticallyTournaments(int limit) {
+        List<Tournament> tournaments = this.findAll();
+        return tournaments.stream()
+                .sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName()))
+                .limit(limit)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasMoreTournaments(int limit) {
+        return this.findAll().size() > limit;
+    }
     
     @Transactional(readOnly = true)
     public List<Object[]> findTeamsWithPointsByTournamentId(Long id) {
