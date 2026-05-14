@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <a class="login-button" th:href="@{/login}">Login</a>
+        </div>
+
+        <main class="content">
+            <h1>Clubs</h1>
+
+            <div class="club-grid" th:if="${not #lists.isEmpty(teams)}">
+                <article class="club-card" th:each="team : ${teams}">
+                    <div class="club-heading">
+                        <img class="club-logo"
+                             th:with="teamLogo=${#strings.isEmpty(team.logo) ? '/images/SiwCalcio_logo.png' : team.logo}"
+                             th:src="@{${teamLogo}}"
+                             th:alt="|Logo ${team.name}|">
+                        <h2 th:text="${team.name}">Team name</h2>
+                    </div>
+
+                    <div class="club-city" th:if="${!#strings.isEmpty(team.city)}">
+                        <span th:text="${team.city}">Roma</span>
+                    </div>
+
+                    <a class="club-info-button" th:href="@{/teams/{id}(id=${team.id})}">Club info</a>
+                </article>
+            </div>
+
+            <p class="empty-state" th:if="${#lists.isEmpty(teams)}">No teams are currently available.</p>
+
+            <div class="actions">
+                <a class="back-button" th:href="@{/}">Back to home page</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
