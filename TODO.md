@@ -3,4 +3,5 @@
 - [ ] Add comment things
 - [ ] Add error pages
 - [ ] What happens when you delete a tournament to the partecipation entities?
-- [ ] Modity various form for matches with javascript front-end for research and filters
+- [ ] Add a way to add/delete teams to a tournament
+- [ ] Modify various forms for matches with javascript front-end for research and filters

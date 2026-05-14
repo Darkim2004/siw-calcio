@@ -12,6 +12,8 @@ INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 
 INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Juventus', 1897, 'Torino');
 INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Milan', 1899, 'Milano');
 INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Napoli', 1926, 'Napoli');
+INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Atalanta', 1907, 'Bergamo');
+INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Lazio', 1900, 'Roma');
 
 -- Test data for players
 INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, squad_number, team_id) VALUES (nextval('player_seq'), 'Paulo', 'Dybala', '1993-11-15', 'FORWARD', '', 177, 21, (SELECT id FROM team WHERE name = 'AS Roma'));
