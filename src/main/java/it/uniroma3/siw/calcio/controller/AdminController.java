@@ -227,6 +227,7 @@ public class AdminController {
     public String getTeamForm(Model model) {
         Team team = new Team();
         model.addAttribute("team", team);
+        addTeamFormAttributes(model);
         return "/admin/team/form";
     }
     
@@ -253,7 +254,6 @@ public class AdminController {
     }
 
     private void addTeamFormAttributes(Model model) {
-        model.addAttribute("tournaments", tournamentService.findAll());
         model.addAttribute("players", playerService.findAllPlayers());
     }
 
