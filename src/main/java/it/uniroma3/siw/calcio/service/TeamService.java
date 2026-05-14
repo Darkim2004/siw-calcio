@@ -13,7 +13,7 @@ import it.uniroma3.siw.calcio.repository.TeamRepository;
 @Service
 public class TeamService {
 
-    TeamRepository teamRepository;
+    private final TeamRepository teamRepository;
 
     public TeamService(TeamRepository teamRepository) {
         this.teamRepository = teamRepository;
@@ -55,5 +55,10 @@ public class TeamService {
     @Transactional(readOnly = true)
     public boolean hasMoreTeams(int limit) {
         return this.findAll().size() > limit;
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        this.teamRepository.deleteById(id);
     }
 }

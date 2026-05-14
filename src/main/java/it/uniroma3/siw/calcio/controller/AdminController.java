@@ -13,15 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import it.uniroma3.siw.calcio.model.Match;
 import it.uniroma3.siw.calcio.model.MatchState;
-import it.uniroma3.siw.calcio.model.Referee;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
 import it.uniroma3.siw.calcio.service.MatchService;
+import it.uniroma3.siw.calcio.service.PlayerService;
 import it.uniroma3.siw.calcio.service.RefereeService;
 import it.uniroma3.siw.calcio.service.TeamService;
 import it.uniroma3.siw.calcio.service.TournamentService;
 import jakarta.validation.Valid;
 import org.springframework.web.server.ResponseStatusException;
+
 
 
 @Controller
@@ -32,12 +33,14 @@ public class AdminController {
     private final MatchService matchService;
     private final TeamService teamService;
     private final RefereeService refereeService;
+    private final PlayerService playerService;
 
-    public AdminController(TournamentService tournamentService, MatchService matchService, TeamService teamService, RefereeService refereeService) {
+    public AdminController(TournamentService tournamentService, MatchService matchService, TeamService teamService, RefereeService refereeService, PlayerService playerService) {
         this.tournamentService = tournamentService;
         this.matchService = matchService;
         this.teamService = teamService;
         this.refereeService = refereeService;
+        this.playerService = playerService;
     }
 
     // ------------------ TOURNAMENTS -------------------
@@ -197,10 +200,10 @@ public class AdminController {
     }
 
     private void setMatchRelations(Match match, Long homeTeamId, Long awayTeamId, Long tournamentId, Long refereeId) {
-        match.setHomeTeam(findTeamById(homeTeamId));
-        match.setAwayTeam(findTeamById(awayTeamId));
-        match.setTournament(findTournamentById(tournamentId));
-        match.setReferee(findRefereeById(refereeId));
+        match.setHomeTeam(teamService.findById(homeTeamId));
+        match.setAwayTeam(teamService.findById(awayTeamId));
+        match.setTournament(tournamentService.findById(tournamentId));
+        match.setReferee(refereeService.findById(refereeId));
     }
 
     private void validateMatchRelations(Match match, Long refereeId, BindingResult bindingResult) {
@@ -218,15 +221,73 @@ public class AdminController {
         }
     }
 
-    private Team findTeamById(Long id) {
-        return id == null ? null : teamService.findById(id);
+    // ------------------ TEAMS -------------------
+
+    @GetMapping("/teams/new")
+    public String getTeamForm(Model model) {
+        Team team = new Team();
+        model.addAttribute("team", team);
+        return "/admin/team/form";
+    }
+    
+    @PostMapping("/teams")
+    public String createTeam(@Valid @ModelAttribute("team") Team team, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "/admin/team/form";
+        }
+
+        teamService.save(team);
+        return "redirect:/teams";
     }
 
-    private Tournament findTournamentById(Long id) {
-        return id == null ? null : tournamentService.findById(id);
+    @GetMapping("/teams/{id}/edit")
+    public String getTeamForm(@PathVariable Long id, Model model) {
+        Team team = teamService.findById(id);
+        if (team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        model.addAttribute("team", team);
+        addTeamFormAttributes(model);
+        return "/admin/team/edit-form";
     }
 
-    private Referee findRefereeById(Long id) {
-        return id == null ? null : refereeService.findById(id);
+    private void addTeamFormAttributes(Model model) {
+        model.addAttribute("tournaments", tournamentService.findAll());
+        model.addAttribute("players", playerService.findAllPlayers());
     }
+
+    @PostMapping("/teams/{id}")
+    public String updateTeam(@PathVariable Long id, @Valid @ModelAttribute("team") Team formTeam, BindingResult bindingResult, Model model) {
+        formTeam.setId(id); // if the id's not set, when it has errors the url breaks
+        if (bindingResult.hasErrors()) {
+            addTeamFormAttributes(model);
+            return "/admin/team/edit-form";
+        }
+
+        Team team = teamService.findById(id);
+        if (team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        team.setName(formTeam.getName());
+        team.setFoundationYear(formTeam.getFoundationYear());
+        team.setCity(formTeam.getCity());
+        team.setLogo(formTeam.getLogo());
+
+        teamService.save(team);
+        
+        return "redirect:/teams";
+    }
+
+    @PostMapping("/teams/{id}/delete")
+    public String deleteTeam(@PathVariable Long id) {
+        Team team = teamService.findById(id);
+        if (team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        teamService.delete(id);
+        return "redirect:/teams";
+    }
+    
 }
