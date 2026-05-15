@@ -3,14 +3,25 @@ package it.uniroma3.siw.calcio.controller;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
-import it.uniroma3.siw.calcio.service.MatchService;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
-
+import it.uniroma3.siw.calcio.model.Match;
+import it.uniroma3.siw.calcio.model.MatchState;
+import it.uniroma3.siw.calcio.model.Team;
+import it.uniroma3.siw.calcio.service.MatchService;
+import it.uniroma3.siw.calcio.service.RefereeService;
+import it.uniroma3.siw.calcio.service.TeamService;
+import it.uniroma3.siw.calcio.service.TournamentService;
+import jakarta.validation.Valid;
 
 @Controller
 public class MatchController {
@@ -19,9 +30,15 @@ public class MatchController {
     private static final DateTimeFormatter MATCH_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm", Locale.ITALIAN);
 
     private final MatchService matchService;
+    private final TeamService teamService;
+    private final TournamentService tournamentService;
+    private final RefereeService refereeService;
 
-    public MatchController(MatchService matchService) {
+    public MatchController(MatchService matchService, TeamService teamService, TournamentService tournamentService, RefereeService refereeService) {
         this.matchService = matchService;
+        this.teamService = teamService;
+        this.tournamentService = tournamentService;
+        this.refereeService = refereeService;
     }
 
     @GetMapping("/matches")
@@ -37,6 +54,120 @@ public class MatchController {
         model.addAttribute(matchService.findById(id));
         return "match/detail";
     }
-    
-    
+
+    @GetMapping("/admin/matches/new")
+    public String getNewMatchForm(Model model) {
+        model.addAttribute("match", new Match());
+        addMatchFormAttributes(model);
+        return "admin/match/form";
+    }
+
+    @PostMapping("/admin/matches")
+    public String createMatch(@Valid @ModelAttribute("match") Match match,
+                              BindingResult bindingResult,
+                              @RequestParam(required = false) Long homeTeamId,
+                              @RequestParam(required = false) Long awayTeamId,
+                              @RequestParam(required = false) Long tournamentId,
+                              @RequestParam(required = false) Long refereeId,
+                              Model model) {
+        setMatchRelations(match, homeTeamId, awayTeamId, tournamentId, refereeId);
+        validateMatchRelations(match, refereeId, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            addMatchFormAttributes(model);
+            return "admin/match/form";
+        }
+
+        matchService.save(match);
+        return "redirect:/matches";
+    }
+
+    @GetMapping("/admin/matches/{id}/edit")
+    public String getEditMatchForm(@PathVariable Long id, Model model) {
+        Match match = matchService.findById(id);
+        if (match == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        model.addAttribute("match", match);
+        addMatchFormAttributes(model);
+        return "admin/match/edit-form";
+    }
+
+    @PostMapping("/admin/matches/{id}")
+    public String updateMatch(@PathVariable Long id,
+                              @Valid @ModelAttribute("match") Match formMatch,
+                              BindingResult bindingResult,
+                              @RequestParam(required = false) Long homeTeamId,
+                              @RequestParam(required = false) Long awayTeamId,
+                              @RequestParam(required = false) Long tournamentId,
+                              @RequestParam(required = false) Long refereeId,
+                              Model model) {
+        formMatch.setId(id);
+        setMatchRelations(formMatch, homeTeamId, awayTeamId, tournamentId, refereeId);
+        validateMatchRelations(formMatch, refereeId, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            addMatchFormAttributes(model);
+            return "admin/match/edit-form";
+        }
+
+        Match match = matchService.findById(id);
+        if (match == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        match.setHomeTeam(formMatch.getHomeTeam());
+        match.setAwayTeam(formMatch.getAwayTeam());
+        match.setDateTime(formMatch.getDateTime());
+        match.setVenue(formMatch.getVenue());
+        match.setState(formMatch.getState());
+        match.setTournament(formMatch.getTournament());
+        match.setGoalsHome(formMatch.getGoalsHome());
+        match.setGoalsAway(formMatch.getGoalsAway());
+        match.setReferee(formMatch.getReferee());
+
+        matchService.save(match);
+        return "redirect:/matches";
+    }
+
+    @PostMapping("/admin/matches/{id}/delete")
+    public String deleteMatch(@PathVariable Long id) {
+        Match match = matchService.findById(id);
+        if (match == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        matchService.delete(match);
+        return "redirect:/matches";
+    }
+
+    private void addMatchFormAttributes(Model model) {
+        model.addAttribute("teams", teamService.findAll());
+        model.addAttribute("tournaments", tournamentService.findAll());
+        model.addAttribute("referees", refereeService.findAll());
+        model.addAttribute("matchStates", MatchState.values());
+    }
+
+    private void setMatchRelations(Match match, Long homeTeamId, Long awayTeamId, Long tournamentId, Long refereeId) {
+        match.setHomeTeam(homeTeamId == null ? null : teamService.findById(homeTeamId));
+        match.setAwayTeam(awayTeamId == null ? null : teamService.findById(awayTeamId));
+        match.setTournament(tournamentId == null ? null : tournamentService.findById(tournamentId));
+        match.setReferee(refereeId == null ? null : refereeService.findById(refereeId));
+    }
+
+    private void validateMatchRelations(Match match, Long refereeId, BindingResult bindingResult) {
+        Team homeTeam = match.getHomeTeam();
+        Team awayTeam = match.getAwayTeam();
+
+        if (homeTeam == null || awayTeam == null || match.getTournament() == null) {
+            bindingResult.reject("match.requiredData");
+        }
+        if (homeTeam != null && awayTeam != null && homeTeam.getId().equals(awayTeam.getId())) {
+            bindingResult.reject("match.sameTeams");
+        }
+        if (refereeId != null && match.getReferee() == null) {
+            bindingResult.reject("match.invalidReferee");
+        }
+    }
 }
