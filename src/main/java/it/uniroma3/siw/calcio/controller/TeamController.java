@@ -32,10 +32,10 @@ public class TeamController {
         if (team != null) {
             List<Player> players = this.teamService.findPlayersByTeamId(id);
             Map<String, List<Player>> playersByRole = new LinkedHashMap<>();
-            playersByRole.put("Attaccanti", filterPlayersByRole(players, RoleSoccer.FORWARD));
-            playersByRole.put("Centrocampisti", filterPlayersByRole(players, RoleSoccer.MIDFIELDER));
-            playersByRole.put("Difensori", filterPlayersByRole(players, RoleSoccer.DEFENDER));
-            playersByRole.put("Portieri", filterPlayersByRole(players, RoleSoccer.GOALKEEPER));
+            playersByRole.put("Forwards", filterPlayersByRole(players, RoleSoccer.FORWARD));
+            playersByRole.put("Midfielders", filterPlayersByRole(players, RoleSoccer.MIDFIELDER));
+            playersByRole.put("Defenders", filterPlayersByRole(players, RoleSoccer.DEFENDER));
+            playersByRole.put("Goalkeepers", filterPlayersByRole(players, RoleSoccer.GOALKEEPER));
             model.addAttribute("playersByRole", playersByRole);
         }
 

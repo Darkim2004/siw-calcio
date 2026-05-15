@@ -23,14 +23,14 @@
                      th:alt="|Logo ${team.name}|">
 
                 <div>
-                    <h1 th:text="${team.name}">Nome squadra</h1>
+                    <h1 th:text="${team.name}">Team Name</h1>
                     <div class="team-meta">
                         <span class="meta-item" th:if="${!#strings.isEmpty(team.city)}">
-                            <strong>Citta:</strong>
+                            <strong>City:</strong>
                             <span th:text="${team.city}">Roma</span>
                         </span>
                         <span class="meta-item" th:if="${team.foundationYear > 0}">
-                            <strong>Fondata:</strong>
+                            <strong>Foundation Year:</strong>
                             <span th:text="${team.foundationYear}">1927</span>
                         </span>
                     </div>
@@ -39,7 +39,7 @@
 
             <section class="roster" th:if="${playersByRole != null and !playersByRole.isEmpty()}">
                 <div class="role-section" th:each="roleEntry : ${playersByRole}">
-                    <h2 th:text="${roleEntry.key}">Ruolo</h2>
+                    <h2 th:text="${roleEntry.key}">Role</h2>
 
                     <div class="players-list" th:if="${not #lists.isEmpty(roleEntry.value)}">
                         <article class="player-card" th:each="player : ${roleEntry.value}">
@@ -48,20 +48,20 @@
                                  th:src="@{${photoPath}}"
                                  th:alt="|Foto ${player.firstName} ${player.lastName}|">
                             <div>
-                                <span class="player-name" th:text="|${player.firstName} ${player.lastName}|">Nome giocatore</span>
+                                <span class="player-name" th:text="|${player.firstName} ${player.lastName}|">Player Name</span>
                                 <span class="player-info" th:if="${player.squadNumber > 0}" th:text="${player.squadNumber}">9</span>
                             </div>
                         </article>
                     </div>
 
-                    <p class="empty-state" th:if="${#lists.isEmpty(roleEntry.value)}">Nessun giocatore in questa categoria.</p>
+                    <p class="empty-state" th:if="${#lists.isEmpty(roleEntry.value)}">No players in this role.</p>
                 </div>
             </section>
 
-            <p class="empty-state" th:if="${playersByRole == null or playersByRole.isEmpty()}">Nessun giocatore presente nella rosa.</p>
+            <p class="empty-state" th:if="${playersByRole == null or playersByRole.isEmpty()}">No players available in the roster.</p>
 
             <div class="actions detail-actions">
-                <a class="back-button" th:href="@{/}">Torna alla home</a>
+                <a class="back-button" th:href="@{/}">Back to home page</a>
 
                 <div class="admin-actions" th:if="${isAdmin}">
                     <a class="add-button" th:href="@{/admin/teams/{id}/edit(id=${team.id})}">Edit team</a>
@@ -77,9 +77,9 @@
         </main>
 
         <main class="content" th:if="${team == null}">
-            <h1>Squadra non trovata</h1>
+            <h1>Team not found</h1>
             <div class="actions">
-                <a class="back-button" th:href="@{/}">Torna alla home</a>
+                <a class="back-button" th:href="@{/}">Back to home page</a>
             </div>
         </main>
     </div>
