@@ -1,8 +1,6 @@
-- [ ] Add admin templates
 - [ ] Adjust user login button when already logged in
 - [ ] Add comment things
 - [ ] Add error pages
 - [ ] What happens when you delete a tournament to the partecipation entities?
 - [ ] Add a way to add/delete teams to a tournament
-- [ ] Modify various forms for matches with javascript front-end for research and filters
-- [ ] Add a way to add/delete players to a team and in general
+- [ ] Modify various forms for matches/teams/tournaments/players with javascript front-end for research and filters
