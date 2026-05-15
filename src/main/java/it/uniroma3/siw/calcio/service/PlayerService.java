@@ -17,9 +17,23 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-     @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<Player> findAllPlayers() {
         return (List<Player>) playerRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public Player findById(Long id) {
+        return playerRepository.findById(id).orElse(null);
+    }
+
+    @Transactional
+    public Player save(Player player) {
+        return playerRepository.save(player);
+    }
+
+    @Transactional
+    public void delete(Player player) {
+        playerRepository.delete(player);
+    }
 }

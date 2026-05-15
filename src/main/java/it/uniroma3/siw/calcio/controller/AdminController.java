@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import it.uniroma3.siw.calcio.model.Match;
 import it.uniroma3.siw.calcio.model.MatchState;
+import it.uniroma3.siw.calcio.model.Player;
+import it.uniroma3.siw.calcio.model.RoleSoccer;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
 import it.uniroma3.siw.calcio.service.MatchService;
@@ -22,6 +24,8 @@ import it.uniroma3.siw.calcio.service.TeamService;
 import it.uniroma3.siw.calcio.service.TournamentService;
 import jakarta.validation.Valid;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -289,5 +293,47 @@ public class AdminController {
         teamService.delete(id);
         return "redirect:/teams";
     }
+
+    @PostMapping("/teams/{id}/players/add")
+    public String addExistingPlayer(@PathVariable Long TeamId, @RequestParam Long playerId) {
+        Team team = teamService.findById(TeamId);
+        if (team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Player player = playerService.findById(playerId);
+        if (player == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        player.setTeam(team);
+        playerService.save(player);
+        
+        return "redirect:/teams/" + TeamId + "/edit";
+    }
+
+    @PostMapping("/teams/{id}/players/remove")
+    public String removePlayer(@PathVariable Long TeamId, @RequestParam Long playerId) {
+        Team team = teamService.findById(TeamId);
+        if (team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Player player = playerService.findById(playerId);
+        if (player == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        playerService.delete(player);
+        
+        return "redirect:/teams/" + TeamId + "/edit";
+    }
+
+    @PostMapping("/teams/{id}/players/new")
+    public String newPlayerForm(@PathVariable Long teamId, Model model) {
+        model.addAttribute("player", new Player());
+        model.addAttribute("teamId", teamId);
+        model.addAttribute("roles", RoleSoccer.values());
+        
+        return "admin/player/form";
+    }
+    
     
 }
