@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New team</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="login-button" type="submit">Logout</button>
+            </form>
+        </div>
+
+        <main class="card">
+            <h1>New team</h1>
+
+            <form class="auth-form" th:action="@{/admin/teams}" th:object="${team}" method="post">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="form-field">
+                    <label for="name">Name</label>
+                    <input id="name" type="text" th:field="*{name}" required autofocus>
+                    <span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="city">City</label>
+                    <input id="city" type="text" th:field="*{city}">
+                    <span class="field-error" th:if="${#fields.hasErrors('city')}" th:errors="*{city}">City error</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="foundationYear">Foundation year</label>
+                    <input id="foundationYear" type="number" th:field="*{foundationYear}" min="1800" max="2100">
+                    <span class="field-error" th:if="${#fields.hasErrors('foundationYear')}" th:errors="*{foundationYear}">Foundation year error</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="logo">Logo path</label>
+                    <input id="logo" type="text" th:field="*{logo}" placeholder="/images/team-logo.png">
+                    <span class="field-error" th:if="${#fields.hasErrors('logo')}" th:errors="*{logo}">Logo error</span>
+                </div>
+
+                <div class="form-actions">
+                    <button class="add-button form-submit" type="submit">Create team</button>
+                    <a class="back-button" th:href="@{/teams}">Back to teams</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

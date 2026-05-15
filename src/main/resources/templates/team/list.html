@@ -33,13 +33,28 @@
                     </div>
 
                     <a class="club-info-button" th:href="@{/teams/{id}(id=${team.id})}">Club info</a>
+
+                    <div class="club-card-actions" th:if="${isAdmin}">
+                        <a class="add-button" th:href="@{/admin/teams/{id}/edit(id=${team.id})}">Edit</a>
+                        <form class="delete-form"
+                              th:action="@{/admin/teams/{id}/delete(id=${team.id})}"
+                              method="post"
+                              onsubmit="return confirm('Are you sure you want to delete this team?');">
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button class="danger-button" type="submit">Delete</button>
+                        </form>
+                    </div>
                 </article>
             </div>
 
             <p class="empty-state" th:if="${#lists.isEmpty(teams)}">No teams are currently available.</p>
 
-            <div class="actions">
+            <div class="actions detail-actions">
                 <a class="back-button" th:href="@{/}">Back to home page</a>
+
+                <div class="admin-actions" th:if="${isAdmin}">
+                    <a class="add-button" th:href="@{/admin/teams/new}">Add team</a>
+                </div>
             </div>
         </main>
     </div>

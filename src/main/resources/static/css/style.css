@@ -290,6 +290,12 @@ h2 {
     align-items: center;
 }
 
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
 .form-submit {
     cursor: pointer;
     font: inherit;
@@ -329,6 +335,61 @@ h2 {
     border: 1px solid rgba(20, 83, 45, 0.25);
     background: rgba(20, 83, 45, 0.1);
     color: var(--accent);
+}
+
+.editor-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+}
+
+.editor-title {
+    min-width: 0;
+}
+
+.editor-title h1 {
+    overflow-wrap: anywhere;
+}
+
+.edit-section {
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+}
+
+.editor-heading + .edit-section {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.section-heading h2 {
+    margin: 0;
+}
+
+.inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.inline-select-field {
+    flex: 1 1 320px;
+}
+
+.card > .meta {
+    margin-bottom: 22px;
 }
 
 .table-wrap {
@@ -633,6 +694,37 @@ tbody td {
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
+.player-meta {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.admin-player-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.admin-player-card {
+    justify-content: space-between;
+    width: 100%;
+    gap: 16px;
+}
+
+.admin-player-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.compact-button {
+    padding: 9px 13px;
+    font-size: 0.9rem;
+}
+
 .club-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -727,6 +819,18 @@ tbody td {
     transform: translateY(-1px);
 }
 
+.club-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.club-card-actions .add-button,
+.club-card-actions .danger-button {
+    padding: 10px 14px;
+}
+
 @media (max-width: 680px) {
     .page {
         padding: 18px;
@@ -752,6 +856,29 @@ tbody td {
 
     .auth-panel {
         padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-heading,
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .inline-form {
+        align-items: stretch;
+    }
+
+    .inline-select-field {
+        flex-basis: 100%;
+    }
+
+    .admin-player-card {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .admin-actions {
