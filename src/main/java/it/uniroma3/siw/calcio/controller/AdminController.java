@@ -1,5 +1,7 @@
 package it.uniroma3.siw.calcio.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +26,6 @@ import it.uniroma3.siw.calcio.service.TeamService;
 import it.uniroma3.siw.calcio.service.TournamentService;
 import jakarta.validation.Valid;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -236,8 +237,9 @@ public class AdminController {
     }
     
     @PostMapping("/teams")
-    public String createTeam(@Valid @ModelAttribute("team") Team team, BindingResult bindingResult) {
+    public String createTeam(@Valid @ModelAttribute("team") Team team, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            addTeamFormAttributes(model);
             return "/admin/team/form";
         }
 
@@ -253,7 +255,7 @@ public class AdminController {
         }
 
         model.addAttribute("team", team);
-        addTeamFormAttributes(model);
+        addTeamEditAttributes(model, team);
         return "/admin/team/edit-form";
     }
 
@@ -261,11 +263,25 @@ public class AdminController {
         model.addAttribute("players", playerService.findAllPlayers());
     }
 
+    private void addTeamEditAttributes(Model model, Team team) {
+        List<Player> teamPlayers = teamService.findPlayersByTeamId(team.getId());
+        List<Player> availablePlayers = playerService.findAllPlayers();
+
+        model.addAttribute("teamPlayers", teamPlayers);
+        model.addAttribute("players", availablePlayers);
+    }
+
+    private void addPlayerFormAttributes(Model model, Team team) {
+        model.addAttribute("team", team);
+        model.addAttribute("teamId", team.getId());
+        model.addAttribute("roles", RoleSoccer.values());
+    }
+
     @PostMapping("/teams/{id}")
     public String updateTeam(@PathVariable Long id, @Valid @ModelAttribute("team") Team formTeam, BindingResult bindingResult, Model model) {
         formTeam.setId(id); // if the id's not set, when it has errors the url breaks
         if (bindingResult.hasErrors()) {
-            addTeamFormAttributes(model);
+            addTeamEditAttributes(model, formTeam);
             return "/admin/team/edit-form";
         }
 
@@ -295,8 +311,8 @@ public class AdminController {
     }
 
     @PostMapping("/teams/{id}/players/add")
-    public String addExistingPlayer(@PathVariable Long TeamId, @RequestParam Long playerId) {
-        Team team = teamService.findById(TeamId);
+    public String addExistingPlayer(@PathVariable("id") Long teamId, @RequestParam Long playerId) {
+        Team team = teamService.findById(teamId);
         if (team == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -307,12 +323,12 @@ public class AdminController {
         player.setTeam(team);
         playerService.save(player);
         
-        return "redirect:/teams/" + TeamId + "/edit";
+        return "redirect:/admin/teams/" + teamId + "/edit";
     }
 
     @PostMapping("/teams/{id}/players/remove")
-    public String removePlayer(@PathVariable Long TeamId, @RequestParam Long playerId) {
-        Team team = teamService.findById(TeamId);
+    public String removePlayer(@PathVariable("id") Long teamId, @RequestParam Long playerId) {
+        Team team = teamService.findById(teamId);
         if (team == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -321,18 +337,47 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
+        if (player.getTeam() == null || !player.getTeam().getId().equals(teamId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         playerService.delete(player);
         
-        return "redirect:/teams/" + TeamId + "/edit";
+        return "redirect:/admin/teams/" + teamId + "/edit";
     }
 
-    @PostMapping("/teams/{id}/players/new")
-    public String newPlayerForm(@PathVariable Long teamId, Model model) {
+    @GetMapping("/teams/{id}/players/new")
+    public String newPlayerForm(@PathVariable("id") Long teamId, Model model) {
+        Team team = teamService.findById(teamId);
+        if (team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
         model.addAttribute("player", new Player());
-        model.addAttribute("teamId", teamId);
-        model.addAttribute("roles", RoleSoccer.values());
+        addPlayerFormAttributes(model, team);
         
         return "admin/player/form";
+    }
+
+    @PostMapping("/teams/{id}/players")
+    public String createPlayer(@PathVariable("id") Long teamId,
+                               @Valid @ModelAttribute("player") Player player,
+                               BindingResult bindingResult,
+                               Model model) {
+        Team team = teamService.findById(teamId);
+        if (team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (bindingResult.hasErrors()) {
+            addPlayerFormAttributes(model, team);
+            return "admin/player/form";
+        }
+
+        player.setTeam(team);
+        playerService.save(player);
+
+        return "redirect:/admin/teams/" + teamId + "/edit";
     }
     
     
