@@ -19,7 +19,7 @@ public class Partecipation {
     private Team team;
     private int points;
     
-        public Long getId() {
+    public Long getId() {
         return id;
     }
     public void setId(Long id) {
