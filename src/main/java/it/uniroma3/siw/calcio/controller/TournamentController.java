@@ -10,17 +10,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
+import it.uniroma3.siw.calcio.service.TeamService;
 import it.uniroma3.siw.calcio.service.TournamentService;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 
 @Controller
 public class TournamentController {
 
     private final TournamentService tournamentService;
+    private final TeamService teamService;
 
-    public TournamentController(TournamentService tournamentService) {
+    public TournamentController(TournamentService tournamentService, TeamService teamService) {
         this.tournamentService = tournamentService;
+        this.teamService = teamService;
     }
 
     @GetMapping("/tournaments")
@@ -93,5 +100,29 @@ public class TournamentController {
 
         tournamentService.delete(tournament);
         return "redirect:/tournaments";
+    }
+
+    @PostMapping("/admin/tournaments/{id}/team/add")
+    public String addTeamToTournament(@PathVariable Long id, @RequestParam Long teamId) {
+        Tournament tournament = tournamentService.findById(id);
+        Team team = teamService.findById(teamId);
+        if (tournament == null || team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        tournamentService.addTeamToTournament(id, team);
+        return "redirect:/tournaments/" + id;
+    }
+
+    @PostMapping("/admin/tournaments/{id}/team/delete")
+    public String deleteTeamFromTournament(@PathVariable Long id, @RequestParam Long teamId) {
+        Tournament tournament = tournamentService.findById(id);
+        Team team = teamService.findById(teamId);
+        if (tournament == null || team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        tournamentService.deleteTeamFromTournament(id, team);
+        return "redirect:/tournaments/" + id;
     }
 }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.uniroma3.siw.calcio.model.Partecipation;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
 import it.uniroma3.siw.calcio.repository.TournamentRepository;
@@ -90,5 +91,38 @@ public class TournamentService {
                     ));
         }
         return null;
+    }
+
+    @Transactional(readOnly = true)
+    public Partecipation findPartecipationByTeamAndTournamentId(Team team, Long tournamentId) {
+        Tournament tournament = this.findById(tournamentId);
+        if (tournament != null && team != null && tournament.getPartecipations() != null) {
+            return tournament.getPartecipations().stream()
+                    .filter(partecipation -> team.equals(partecipation.getTeam()))
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
+    }
+
+    @Transactional
+    public void addTeamToTournament(Long tournamentId, Team team) {
+        Tournament tournament = this.findById(tournamentId);
+        Partecipation partecipation = new Partecipation();
+        partecipation.setTournament(tournament);
+        partecipation.setTeam(team);
+        partecipation.setPoints(0);
+        tournament.getPartecipations().add(partecipation);
+        this.save(tournament);
+    }
+
+    @Transactional
+    public void deleteTeamFromTournament(Long tournamentId, Team team) {
+        Tournament tournament = this.findById(tournamentId);
+        if (tournament != null && team != null && this.findPartecipationByTeamAndTournamentId(team, tournamentId) != null) {
+            Partecipation partecipation = this.findPartecipationByTeamAndTournamentId(team, tournamentId);
+            tournament.getPartecipations().remove(partecipation);
+            this.save(tournament);
+        }
     }
 }
