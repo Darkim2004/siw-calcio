@@ -10,16 +10,20 @@ import org.springframework.transaction.annotation.Transactional;
 import it.uniroma3.siw.calcio.model.Partecipation;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
+import it.uniroma3.siw.calcio.repository.PartecipationRepository;
 import it.uniroma3.siw.calcio.repository.TournamentRepository;
 
 @Service
 public class TournamentService {
 
     private final TournamentRepository tournamentRepository;
+    private final PartecipationRepository partecipationRepository;
     private final MatchService matchService;
 
-    public TournamentService(TournamentRepository tournamentRepository, MatchService matchService) {
+    public TournamentService(TournamentRepository tournamentRepository, PartecipationRepository partecipationRepository,
+            MatchService matchService) {
         this.tournamentRepository = tournamentRepository;
+        this.partecipationRepository = partecipationRepository;
         this.matchService = matchService;
     }
 
@@ -45,13 +49,13 @@ public class TournamentService {
 
     // @Transactional(readOnly = true)
     // public List<Team> findTeamsByTournamentId(Long id) {
-    //     Tournament tournament = this.findById(id);
-    //     if (tournament != null) {
-    //         return tournament.getPartecipations().stream()
-    //                 .map(partecipation -> partecipation.getTeam())
-    //                 .toList();
-    //     }
-    //     return null;
+    // Tournament tournament = this.findById(id);
+    // if (tournament != null) {
+    // return tournament.getPartecipations().stream()
+    // .map(partecipation -> partecipation.getTeam())
+    // .toList();
+    // }
+    // return null;
     // }
 
     @Transactional(readOnly = true)
@@ -67,14 +71,14 @@ public class TournamentService {
     public boolean hasMoreTournaments(int limit) {
         return this.findAll().size() > limit;
     }
-    
+
     @Transactional(readOnly = true)
     public List<Object[]> findTeamsWithPointsByTournamentId(Long id) {
         Tournament tournament = this.findById(id);
         if (tournament != null) {
             return tournament.getPartecipations().stream()
                     .sorted((p1, p2) -> Integer.compare(p2.getPoints(), p1.getPoints()))
-                    .map(partecipation -> new Object[]{partecipation.getTeam(), partecipation.getPoints()})
+                    .map(partecipation -> new Object[] { partecipation.getTeam(), partecipation.getPoints() })
                     .toList();
         }
         return null;
@@ -87,8 +91,8 @@ public class TournamentService {
             return tournament.getPartecipations().stream()
                     .collect(Collectors.toMap(
                             partecipation -> (Team) partecipation.getTeam(),
-                            partecipation -> (Integer) matchService.findLastMatchPointsByTeamAndTournament(partecipation.getTeam(), tournament)
-                    ));
+                            partecipation -> (Integer) matchService
+                                    .findLastMatchPointsByTeamAndTournament(partecipation.getTeam(), tournament)));
         }
         return null;
     }
@@ -108,21 +112,32 @@ public class TournamentService {
     @Transactional
     public void addTeamToTournament(Long tournamentId, Team team) {
         Tournament tournament = this.findById(tournamentId);
+
+        if (tournament == null || team == null || team.getId() == null) {
+            return;
+        }
+
+        if (partecipationRepository.existsByTournament_IdAndTeam_Id(tournamentId, team.getId())) {
+            return;
+        }
+
         Partecipation partecipation = new Partecipation();
         partecipation.setTournament(tournament);
         partecipation.setTeam(team);
         partecipation.setPoints(0);
-        tournament.getPartecipations().add(partecipation);
-        this.save(tournament);
+
+        partecipationRepository.save(partecipation);
     }
 
     @Transactional
     public void deleteTeamFromTournament(Long tournamentId, Team team) {
         Tournament tournament = this.findById(tournamentId);
-        if (tournament != null && team != null && this.findPartecipationByTeamAndTournamentId(team, tournamentId) != null) {
-            Partecipation partecipation = this.findPartecipationByTeamAndTournamentId(team, tournamentId);
-            tournament.getPartecipations().remove(partecipation);
-            this.save(tournament);
+        if (tournament == null || team == null || team.getId() == null) {
+            return;
+        }
+        Partecipation partecipation = partecipationRepository.findByTournament_IdAndTeam_Id(tournamentId, team.getId());
+        if (partecipation != null) {
+            partecipationRepository.delete(partecipation);
         }
     }
 }
