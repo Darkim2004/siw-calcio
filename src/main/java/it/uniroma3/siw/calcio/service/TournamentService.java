@@ -7,9 +7,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.uniroma3.siw.calcio.model.Match;
 import it.uniroma3.siw.calcio.model.Partecipation;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
+import it.uniroma3.siw.calcio.repository.MatchRepository;
 import it.uniroma3.siw.calcio.repository.PartecipationRepository;
 import it.uniroma3.siw.calcio.repository.TournamentRepository;
 
@@ -18,12 +20,14 @@ public class TournamentService {
 
     private final TournamentRepository tournamentRepository;
     private final PartecipationRepository partecipationRepository;
+    private final MatchRepository matchRepository;
     private final MatchService matchService;
 
     public TournamentService(TournamentRepository tournamentRepository, PartecipationRepository partecipationRepository,
-            MatchService matchService) {
+            MatchRepository matchRepository, MatchService matchService) {
         this.tournamentRepository = tournamentRepository;
         this.partecipationRepository = partecipationRepository;
+        this.matchRepository = matchRepository;
         this.matchService = matchService;
     }
 
@@ -44,19 +48,23 @@ public class TournamentService {
 
     @Transactional
     public void delete(Tournament tournament) {
+        if (tournament == null || tournament.getId() == null) {
+            return;
+        }
+
+        // Removes the tournament reference from matches
+        List<Match> matches = matchRepository.findByTournament_Id(tournament.getId());
+        for (Match match : matches) {
+            match.setTournament(null);
+        }
+        matchRepository.saveAll(matches);
+
+        // Deletes all partecipations related to the tournament
+        List<Partecipation> partecipations = partecipationRepository.findByTournament_Id(tournament.getId());
+        partecipationRepository.deleteAll(partecipations);
+
         tournamentRepository.delete(tournament);
     }
-
-    // @Transactional(readOnly = true)
-    // public List<Team> findTeamsByTournamentId(Long id) {
-    // Tournament tournament = this.findById(id);
-    // if (tournament != null) {
-    // return tournament.getPartecipations().stream()
-    // .map(partecipation -> partecipation.getTeam())
-    // .toList();
-    // }
-    // return null;
-    // }
 
     @Transactional(readOnly = true)
     public List<Tournament> findFirstAlphabeticallyTournaments(int limit) {

@@ -1,5 +1,7 @@
 package it.uniroma3.siw.calcio.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 
 import it.uniroma3.siw.calcio.model.Partecipation;
@@ -9,5 +11,7 @@ public interface PartecipationRepository extends CrudRepository<Partecipation, L
     boolean existsByTournament_IdAndTeam_Id(Long tournamentId, Long teamId);
 
     Partecipation findByTournament_IdAndTeam_Id(Long tournamentId, Long teamId);
+
+    List<Partecipation> findByTournament_Id(Long tournamentId);
 
 }
