@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,12 +28,13 @@ public class Team {
 
     private String logo;
 
+    // orphanRemoval ensures that when a partecipation is removed from the team, it is also deleted from the database
     @Lazy
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Partecipation> partecipations;
 
     @Lazy
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", orphanRemoval = true)
     private List<Player> players;
 
     public Long getId() {

@@ -22,4 +22,6 @@ public interface MatchRepository extends CrudRepository<Match, Long> {
 
     List<Match> findByTournament_Id(Long tournamentId);
 
+    List<Match> findByHomeTeam_IdOrAwayTeam_Id(Long id, Long id2);
+
 }
