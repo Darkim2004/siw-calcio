@@ -1,6 +1,4 @@
 - [ ] Adjust user login button when already logged in
-- [ ] Add comment things
 - [ ] Add error pages
 - [ ] Modify various forms for matches/teams/tournaments/players with javascript front-end for research and filters
 - [ ] Solve n+1 problem in matches/teams/tournaments/players pages
-- [ ] Change edit comment to a button
