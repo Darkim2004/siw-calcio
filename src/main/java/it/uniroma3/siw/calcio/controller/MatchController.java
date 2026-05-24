@@ -1,5 +1,6 @@
 package it.uniroma3.siw.calcio.controller;
 
+import it.uniroma3.siw.calcio.service.CommentService;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import it.uniroma3.siw.calcio.model.Comment;
 import it.uniroma3.siw.calcio.model.Match;
 import it.uniroma3.siw.calcio.model.MatchState;
 import it.uniroma3.siw.calcio.model.Team;
@@ -26,6 +28,7 @@ import jakarta.validation.Valid;
 @Controller
 public class MatchController {
 
+    private final CommentService commentService;
     private static final DateTimeFormatter MATCH_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.ITALIAN);
     private static final DateTimeFormatter MATCH_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm", Locale.ITALIAN);
 
@@ -34,11 +37,12 @@ public class MatchController {
     private final TournamentService tournamentService;
     private final RefereeService refereeService;
 
-    public MatchController(MatchService matchService, TeamService teamService, TournamentService tournamentService, RefereeService refereeService) {
+    public MatchController(MatchService matchService, TeamService teamService, TournamentService tournamentService, RefereeService refereeService, CommentService commentService) {
         this.matchService = matchService;
         this.teamService = teamService;
         this.tournamentService = tournamentService;
         this.refereeService = refereeService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/matches")
@@ -51,7 +55,15 @@ public class MatchController {
 
     @GetMapping("/matches/{id}")
     public String getMatch(@PathVariable Long id, Model model) {
-        model.addAttribute(matchService.findById(id));
+        Match match = matchService.findById(id);
+        if (match == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        model.addAttribute("match", match);
+        model.addAttribute("comment", new Comment());
+        model.addAttribute("comments", commentService.findByMatchId(id));
+        model.addAttribute("matchDateFormatter", MATCH_DATE_FORMATTER);
+        model.addAttribute("matchTimeFormatter", MATCH_TIME_FORMATTER);
         return "match/detail";
     }
 

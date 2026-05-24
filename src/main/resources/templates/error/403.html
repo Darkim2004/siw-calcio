@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access denied</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <a class="login-button" th:href="@{/login}">Login</a>
+        </div>
+
+        <main class="content">
+            <h1>Access denied</h1>
+            <p class="empty-state" th:text="${errorMessage != null ? errorMessage : 'You are not allowed to perform this action.'}">
+                You are not allowed to perform this action.
+            </p>
+
+            <div class="actions">
+                <a class="back-button" th:href="@{/matches}">Back to matches</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${match != null ? 'Match detail' : 'Match not found'}">Match detail</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <a class="login-button" th:href="@{/login}">Login</a>
+        </div>
+
+        <main class="content" th:if="${match != null}">
+            <section class="match-detail-header">
+                <div class="match-detail-date" th:if="${match.dateTime != null}">
+                    <span th:text="${match.dateTime.format(matchDateFormatter)}">Monday 1 June</span>
+                    <strong th:text="${match.dateTime.format(matchTimeFormatter)}">20:45</strong>
+                </div>
+                <div class="match-detail-date" th:if="${match.dateTime == null}">
+                    <span>Date not set</span>
+                    <strong>--:--</strong>
+                </div>
+
+                <div class="match-detail-teams">
+                    <a class="match-detail-team" th:href="@{/teams/{id}(id=${match.homeTeam.id})}">
+                        <img class="match-detail-logo"
+                             th:with="homeLogo=${#strings.isEmpty(match.homeTeam.logo) ? '/images/SiwCalcio_logo.png' : match.homeTeam.logo}"
+                             th:src="@{${homeLogo}}"
+                             th:alt="|Logo ${match.homeTeam.name}|">
+                        <span th:text="${match.homeTeam.name}">Home team</span>
+                    </a>
+
+                    <div class="match-detail-result">
+                        <div class="match-score" th:if="${match.state != null and match.state.name() == 'PLAYED'}">
+                            <span th:text="${match.goalsHome}">0</span>
+                            <span class="score-separator">|</span>
+                            <span th:text="${match.goalsAway}">0</span>
+                        </div>
+                        <div class="match-center" th:if="${match.state == null or match.state.name() != 'PLAYED'}">VS</div>
+                        <span class="match-status" th:text="${match.state != null ? match.state : 'SCHEDULED'}">SCHEDULED</span>
+                    </div>
+
+                    <a class="match-detail-team" th:href="@{/teams/{id}(id=${match.awayTeam.id})}">
+                        <img class="match-detail-logo"
+                             th:with="awayLogo=${#strings.isEmpty(match.awayTeam.logo) ? '/images/SiwCalcio_logo.png' : match.awayTeam.logo}"
+                             th:src="@{${awayLogo}}"
+                             th:alt="|Logo ${match.awayTeam.name}|">
+                        <span th:text="${match.awayTeam.name}">Away team</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="match-info-grid">
+                <div class="meta-item" th:if="${match.tournament != null}">
+                    <strong>Tournament:</strong>
+                    <a th:href="@{/tournaments/{id}(id=${match.tournament.id})}" th:text="${match.tournament.name}">Tournament</a>
+                </div>
+                <div class="meta-item" th:if="${!#strings.isEmpty(match.venue)}">
+                    <strong>Venue:</strong>
+                    <span th:text="${match.venue}">Venue</span>
+                </div>
+                <div class="meta-item" th:if="${match.referee != null}">
+                    <strong>Referee:</strong>
+                    <span th:text="|${match.referee.firstName} ${match.referee.lastName}|">Referee name</span>
+                </div>
+            </section>
+
+            <section class="comments-section">
+                <div class="section-heading">
+                    <h2>Comments</h2>
+                </div>
+
+                <form class="auth-form comment-form"
+                      th:action="@{/matches/{id}/comments(id=${match.id})}"
+                      th:object="${comment}"
+                      method="post">
+                    <div class="form-field">
+                        <label for="comment-text">Add a comment</label>
+                        <textarea id="comment-text" th:field="*{text}" required></textarea>
+                        <span class="field-error" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">Comment error</span>
+                    </div>
+                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div class="form-actions">
+                        <button class="login-button form-submit" type="submit">Post comment</button>
+                    </div>
+                </form>
+
+                <div class="comments-list" th:if="${not #lists.isEmpty(comments)}">
+                    <article class="comment-card" th:each="commentItem : ${comments}">
+                        <div class="comment-head">
+                            <strong th:text="${commentItem.author.username}">username</strong>
+                            <span th:if="${commentItem.creationDateTime != null}"
+                                  th:text="${#temporals.format(commentItem.creationDateTime, 'dd/MM/yyyy HH:mm')}">01/06/2026 20:45</span>
+                        </div>
+
+                        <p class="comment-text" th:text="${commentItem.text}">Comment text</p>
+
+                        <div class="comment-actions" th:if="${userdetails != null and userdetails.username == commentItem.author.username}">
+                            <form class="comment-edit-form"
+                                  th:action="@{/matches/{matchId}/comments/{commentId}/update(matchId=${match.id}, commentId=${commentItem.id})}"
+                                  method="post">
+                                <div class="form-field">
+                                    <label th:for="|comment-edit-${commentItem.id}|">Edit comment</label>
+                                    <textarea th:id="|comment-edit-${commentItem.id}|" name="text" required th:text="${commentItem.text}">Comment text</textarea>
+                                </div>
+                                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button class="add-button compact-button" type="submit">Save</button>
+                            </form>
+
+                            <form class="delete-form"
+                                  th:action="@{/matches/{matchId}/comments/{commentId}/delete(matchId=${match.id}, commentId=${commentItem.id})}"
+                                  method="post"
+                                  onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button class="danger-button compact-button" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </article>
+                </div>
+
+                <p class="empty-state" th:if="${#lists.isEmpty(comments)}">No comments yet.</p>
+            </section>
+
+            <div class="actions detail-actions">
+                <a class="back-button" th:href="@{/matches}">Back to matches</a>
+
+                <div class="admin-actions" th:if="${isAdmin}">
+                    <a class="add-button" th:href="@{/admin/matches/{id}/edit(id=${match.id})}">Edit match</a>
+                    <form class="delete-form"
+                          th:action="@{/admin/matches/{id}/delete(id=${match.id})}"
+                          method="post"
+                          onsubmit="return confirm('Are you sure you want to delete this match?');">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button class="danger-button" type="submit">Delete match</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <main class="content" th:if="${match == null}">
+            <h1>Match not found</h1>
+            <div class="actions">
+                <a class="back-button" th:href="@{/matches}">Back to matches</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

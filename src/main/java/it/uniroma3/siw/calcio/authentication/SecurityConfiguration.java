@@ -39,10 +39,11 @@ public class SecurityConfiguration {
     @Bean
     protected SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> {
-            authorize.requestMatchers(HttpMethod.GET, "/", "/index", "/matches", "/matches/**",
+            authorize.requestMatchers(HttpMethod.GET, "/", "/index", "/matches",
                     "/teams", "/teams/**", "/tournaments", "/tournaments/**", "/login", "/register",
                 "/css/**", "/fonts/**", "/images/**").permitAll();
             authorize.requestMatchers(HttpMethod.POST, "/register", "/perform-login").permitAll();
+            authorize.requestMatchers("/matches/*", "/matches/*/comments/**").authenticated();
             authorize.requestMatchers("/admin/**").hasRole("ADMIN");
             authorize.anyRequest().authenticated();
         });

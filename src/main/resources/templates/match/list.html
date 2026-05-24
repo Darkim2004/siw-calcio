@@ -50,9 +50,10 @@
                         </div>
                     </div>
 
-                    <div class="admin-actions match-admin-actions" th:if="${isAdmin}">
-                        <a class="add-button" th:href="@{/admin/matches/{id}/edit(id=${match.id})}">Edit match</a>
-                        <form class="delete-form" th:action="@{/admin/matches/{id}/delete(id=${match.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this match?');">
+                    <div class="admin-actions match-admin-actions">
+                        <a class="add-button" th:href="@{/matches/{id}(id=${match.id})}">Details</a>
+                        <a class="add-button" th:if="${isAdmin}" th:href="@{/admin/matches/{id}/edit(id=${match.id})}">Edit match</a>
+                        <form class="delete-form" th:if="${isAdmin}" th:action="@{/admin/matches/{id}/delete(id=${match.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this match?');">
                             <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <button class="danger-button" type="submit">Delete match</button>
                         </form>
