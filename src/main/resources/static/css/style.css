@@ -296,6 +296,10 @@ h2 {
     gap: 18px;
 }
 
+.form-field-wide {
+    grid-column: 1 / -1;
+}
+
 .form-submit {
     cursor: pointer;
     font: inherit;
@@ -423,6 +427,10 @@ thead th {
 
 tbody tr {
     cursor: pointer;
+}
+
+.static-table tbody tr {
+    cursor: default;
 }
 
 tbody tr:hover {

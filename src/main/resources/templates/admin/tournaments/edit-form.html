@@ -18,38 +18,118 @@
 			</form>
 		</div>
 
-		<main class="card">
-			<h1>Edit tournament</h1>
-
-			<form class="auth-form"
-				  th:action="@{/admin/tournaments/{id}(id=${tournament.id})}"
-				  th:object="${tournament}"
-				  method="post">
-				<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-
-				<div class="form-field">
-					<label for="name">Name</label>
-					<input id="name" type="text" th:field="*{name}" required autofocus>
-					<span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</span>
+		<main class="content team-editor">
+			<div class="editor-heading">
+				<div class="editor-title">
+					<h1>Edit tournament</h1>
+					<p class="meta" th:text="${tournament.name}">Tournament name</p>
 				</div>
 
-				<div class="form-field">
-					<label for="year">Year</label>
-					<input id="year" type="number" th:field="*{year}" min="1900" max="2100" required>
-					<span class="field-error" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Year error</span>
+				<div class="detail-actions">
+					<a class="back-button" th:href="@{/tournaments/{id}(id=${tournament.id})}">View tournament</a>
+				</div>
+			</div>
+
+			<section class="edit-section">
+				<h2>Tournament details</h2>
+
+				<form class="auth-form"
+					  th:action="@{/admin/tournaments/{id}(id=${tournament.id})}"
+					  th:object="${tournament}"
+					  method="post">
+					<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+					<div class="form-grid">
+						<div class="form-field">
+							<label for="name">Name</label>
+							<input id="name" type="text" th:field="*{name}" required autofocus>
+							<span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</span>
+						</div>
+
+						<div class="form-field">
+							<label for="year">Year</label>
+							<input id="year" type="number" th:field="*{year}" min="1900" max="2100" required>
+							<span class="field-error" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Year error</span>
+						</div>
+
+						<div class="form-field form-field-wide">
+							<label for="description">Description</label>
+							<textarea id="description" th:field="*{description}" rows="5"></textarea>
+							<span class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description error</span>
+						</div>
+					</div>
+
+					<div class="form-actions">
+						<button class="add-button form-submit" type="submit">Save changes</button>
+					</div>
+				</form>
+			</section>
+
+			<section class="edit-section">
+				<h2>Teams</h2>
+
+				<div class="table-wrap" th:if="${not #lists.isEmpty(teamParticipations)}">
+					<table class="static-table">
+						<thead>
+							<tr>
+								<th>Team</th>
+								<th>Points</th>
+								<th class="table-action-header">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="partecipation : ${teamParticipations}">
+								<td>
+									<a th:href="@{/teams/{id}(id=${partecipation.team.id})}"
+									   th:text="${partecipation.team.name}">Team name</a>
+								</td>
+								<td th:text="${partecipation.points}">0</td>
+								<td class="table-action-cell">
+									<form class="delete-form"
+										  th:action="@{/admin/tournaments/{id}/team/delete(id=${tournament.id})}"
+										  method="post"
+										  onsubmit="return confirm('Remove this team from the tournament?');">
+										<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+										<input type="hidden" name="teamId" th:value="${partecipation.team.id}">
+										<button class="danger-button compact-button" type="submit">Remove</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 
-				<div class="form-field">
-					<label for="description">Description</label>
-					<textarea id="description" th:field="*{description}" rows="5"></textarea>
-					<span class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description error</span>
-				</div>
+				<p class="empty-state" th:if="${#lists.isEmpty(teamParticipations)}">No teams are currently registered in this tournament.</p>
+			</section>
 
-				<div class="form-actions">
-					<button class="add-button form-submit" type="submit">Save changes</button>
-					<a class="back-button" th:href="@{/tournaments/{id}(id=${tournament.id})}">Back to tournament</a>
-				</div>
-			</form>
+			<section class="edit-section">
+				<h2>Add existing team</h2>
+
+				<form class="inline-form"
+					  th:if="${not #lists.isEmpty(availableTeams)}"
+					  th:action="@{/admin/tournaments/{id}/team/add(id=${tournament.id})}"
+					  method="post">
+					<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+					<div class="form-field inline-select-field">
+						<label for="teamId">Team</label>
+						<select id="teamId" name="teamId" required>
+							<option value="">Select team</option>
+							<option th:each="team : ${availableTeams}"
+									th:value="${team.id}"
+									th:text="${team.name + (#strings.isEmpty(team.city) ? '' : ' - ' + team.city)}">Team</option>
+						</select>
+					</div>
+
+					<button class="add-button form-submit" type="submit">Add to tournament</button>
+				</form>
+
+				<p class="empty-state" th:if="${#lists.isEmpty(availableTeams)}">No existing teams available to add.</p>
+			</section>
+
+			<div class="actions detail-actions">
+				<a class="back-button" th:href="@{/tournaments}">Back to tournaments</a>
+			</div>
 		</main>
 	</div>
 </body>
