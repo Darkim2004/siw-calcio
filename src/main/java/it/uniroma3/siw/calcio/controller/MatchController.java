@@ -90,7 +90,8 @@ public class MatchController {
             return "admin/match/form";
         }
 
-        matchService.save(match);
+        Match savedMatch = matchService.save(match);
+        recalculateStandings(savedMatch);
         return "redirect:/matches";
     }
 
@@ -128,6 +129,7 @@ public class MatchController {
         if (match == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        Long previousTournamentId = getTournamentId(match);
 
         match.setHomeTeam(formMatch.getHomeTeam());
         match.setAwayTeam(formMatch.getAwayTeam());
@@ -139,7 +141,9 @@ public class MatchController {
         match.setGoalsAway(formMatch.getGoalsAway());
         match.setReferee(formMatch.getReferee());
 
-        matchService.save(match);
+        Match savedMatch = matchService.save(match);
+        recalculateStandings(previousTournamentId, savedMatch);
+
         return "redirect:/matches";
     }
 
@@ -149,8 +153,10 @@ public class MatchController {
         if (match == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        Long tournamentId = getTournamentId(match);
 
         matchService.delete(match);
+        tournamentService.recalculateStandings(tournamentId);
         return "redirect:/matches";
     }
 
@@ -181,5 +187,24 @@ public class MatchController {
         if (refereeId != null && match.getReferee() == null) {
             bindingResult.reject("match.invalidReferee");
         }
+    }
+
+    private void recalculateStandings(Match match) {
+        tournamentService.recalculateStandings(getTournamentId(match));
+    }
+
+    private void recalculateStandings(Long previousTournamentId, Match match) {
+        Long currentTournamentId = getTournamentId(match);
+        if (previousTournamentId != null && !previousTournamentId.equals(currentTournamentId)) {
+            tournamentService.recalculateStandings(previousTournamentId);
+        }
+        tournamentService.recalculateStandings(currentTournamentId);
+    }
+
+    private Long getTournamentId(Match match) {
+        if (match == null || match.getTournament() == null) {
+            return null;
+        }
+        return match.getTournament().getId();
     }
 }

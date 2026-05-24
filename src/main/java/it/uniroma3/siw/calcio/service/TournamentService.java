@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,6 +151,46 @@ public class TournamentService {
         return POINTS_FOR_LOSS;
     }
 
+    @Transactional
+    public void recalculateStandings(Long tournamentId) {
+        if (tournamentId == null) {
+            return;
+        }
+
+        List<Partecipation> partecipations = partecipationRepository.findByTournament_Id(tournamentId);
+        Map<Long, Partecipation> partecipationByTeamId = partecipations.stream()
+                .filter(partecipation -> partecipation.getTeam() != null && partecipation.getTeam().getId() != null)
+                .peek(partecipation -> partecipation.setPoints(0))
+                .collect(Collectors.toMap(
+                        partecipation -> partecipation.getTeam().getId(),
+                        Function.identity(),
+                        (existing, duplicate) -> existing));
+
+        List<Match> playedMatches = matchRepository.findByTournamentIdAndStateWithTeamsOrderByDateTimeDesc(
+                tournamentId, MatchState.PLAYED);
+
+        for (Match match : playedMatches) {
+            Team homeTeam = match.getHomeTeam();
+            Team awayTeam = match.getAwayTeam();
+            if (homeTeam == null || awayTeam == null || homeTeam.getId() == null || awayTeam.getId() == null) {
+                continue;
+            }
+
+            addPoints(partecipationByTeamId.get(homeTeam.getId()),
+                    calculateMatchPoints(match.getGoalsHome(), match.getGoalsAway()));
+            addPoints(partecipationByTeamId.get(awayTeam.getId()),
+                    calculateMatchPoints(match.getGoalsAway(), match.getGoalsHome()));
+        }
+
+        partecipationRepository.saveAll(partecipations);
+    }
+
+    private void addPoints(Partecipation partecipation, int points) {
+        if (partecipation != null) {
+            partecipation.setPoints(partecipation.getPoints() + points);
+        }
+    }
+
     @Transactional(readOnly = true)
     public Partecipation findPartecipationByTeamAndTournamentId(Team team, Long tournamentId) {
         if (team == null || team.getId() == null || tournamentId == null) {
@@ -175,6 +217,7 @@ public class TournamentService {
         partecipation.setPoints(0);
 
         partecipationRepository.save(partecipation);
+        recalculateStandings(tournamentId);
     }
 
     @Transactional
@@ -186,6 +229,7 @@ public class TournamentService {
         Partecipation partecipation = partecipationRepository.findByTournament_IdAndTeam_Id(tournamentId, team.getId());
         if (partecipation != null) {
             partecipationRepository.delete(partecipation);
+            recalculateStandings(tournamentId);
         }
     }
 }
