@@ -64,6 +64,12 @@ public class CommentService {
         }
     }
 
+    @Transactional
+    public void deleteByMatch(Match match) {
+        List<Comment> comments = this.commentRepository.findByMatchId(match.getId());
+        this.commentRepository.deleteAll(comments);
+    }
+
     @Transactional(readOnly = true)
     public List<Comment> findByMatchId(Long id) {
         return this.commentRepository.findByMatchId(id);

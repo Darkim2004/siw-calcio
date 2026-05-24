@@ -14,9 +14,11 @@ import it.uniroma3.siw.calcio.repository.MatchRepository;
 public class MatchService {
 
     private final MatchRepository matchRepository;
+    private final CommentService commentService;
 
-    public MatchService(MatchRepository matchRepository) {
+    public MatchService(MatchRepository matchRepository, CommentService commentService) {
         this.matchRepository = matchRepository;
+        this.commentService = commentService;
     }
 
     @Transactional(readOnly = true)
@@ -41,6 +43,7 @@ public class MatchService {
 
     @Transactional
     public void delete(Match match) {
+        commentService.deleteByMatch(match);
         this.matchRepository.delete(match);
     }
 
