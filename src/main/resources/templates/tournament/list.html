@@ -25,6 +25,7 @@
                             <th>Name</th>
                             <th>Year</th>
                             <th>Description</th>
+                            <th th:if="${isAdmin}" class="table-action-header">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,6 +34,15 @@
                             <td th:text="${tournament.name}">Tournament name</td>
                             <td th:text="${tournament.year}">2026</td>
                             <td th:text="${tournament.description}">Tournament description</td>
+                            <td th:if="${isAdmin}" class="table-action-cell" onclick="event.stopPropagation();">
+                                <form class="delete-form"
+                                      th:action="@{/admin/tournaments/{id}/delete(id=${tournament.id})}"
+                                      method="post"
+                                      onsubmit="return confirm('Are you sure you want to delete this tournament?');">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button class="danger-button compact-button" type="submit">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -412,6 +412,15 @@ thead th {
     border-bottom: 2px solid var(--line);
 }
 
+.table-action-header,
+.table-action-cell {
+    text-align: right;
+}
+
+.table-action-cell {
+    white-space: nowrap;
+}
+
 tbody tr {
     cursor: pointer;
 }
