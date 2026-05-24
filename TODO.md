@@ -1,4 +1,3 @@
 - [ ] Adjust user login button when already logged in
-- [ ] Add error pages
 - [ ] Modify various forms for matches/teams/tournaments/players with javascript front-end for research and filters
-- [ ] Solve n+1 problem in matches/teams/tournaments/players pages
+- [ ] Add referee management (CRUD) and assign referees to matches
