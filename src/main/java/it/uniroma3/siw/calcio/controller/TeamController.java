@@ -22,6 +22,7 @@ import it.uniroma3.siw.calcio.service.PlayerService;
 import it.uniroma3.siw.calcio.service.TeamService;
 import jakarta.validation.Valid;
 
+
 @Controller
 public class TeamController {
 
@@ -172,6 +173,53 @@ public class TeamController {
         addPlayerFormAttributes(model, team);
         return "admin/player/form";
     }
+
+    @GetMapping("/admin/teams/{teamId}/players/{playerId}/edit")
+    public String getEditPlayerForm(@PathVariable Long teamId, @PathVariable Long playerId, Model model) {
+        Team team = teamService.findById(teamId);
+        Player player = playerService.findById(playerId);
+        if (team == null || player == null || player.getTeam() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (!player.getTeam().getId().equals(teamId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        model.addAttribute("player", player);
+        model.addAttribute("team", team);
+        model.addAttribute("roles", RoleSoccer.values());
+        return "admin/player/edit-form";
+    }
+
+    @PostMapping("/admin/teams/{teamId}/players/{playerId}")
+    public String updatePlayer(@Valid @ModelAttribute("player") Player formPlayer, BindingResult bindingResult, @PathVariable Long teamId, @PathVariable Long playerId, Model model) {
+        formPlayer.setId(playerId);
+        Team team = teamService.findById(teamId);
+        if (team == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (bindingResult.hasErrors()) {
+            addPlayerFormAttributes(model, teamService.findById(teamId));
+            return "admin/player/edit-form";
+        }
+
+        Player player = playerService.findById(playerId);
+        if (player == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (player.getTeam() == null || !player.getTeam().getId().equals(teamId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        player.setFirstName(formPlayer.getFirstName());
+        player.setLastName(formPlayer.getLastName());
+        player.setBirthDate(formPlayer.getBirthDate());
+        player.setRole(formPlayer.getRole());
+        player.setPhoto(formPlayer.getPhoto());
+        player.setHeight(formPlayer.getHeight());
+        player.setSquadNumber(formPlayer.getSquadNumber());
+        playerService.save(player);
+        return "redirect:/admin/teams/" + teamId + "/edit";
+    }
+        
 
     @PostMapping("/admin/teams/{id}/players")
     public String createPlayer(@PathVariable("id") Long teamId,

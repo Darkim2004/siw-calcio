@@ -8,17 +8,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.uniroma3.siw.calcio.model.Match;
+import it.uniroma3.siw.calcio.repository.CommentRepository;
 import it.uniroma3.siw.calcio.repository.MatchRepository;
 
 @Service
 public class MatchService {
 
     private final MatchRepository matchRepository;
-    private final CommentService commentService;
+    private final CommentRepository commentRepository;
 
-    public MatchService(MatchRepository matchRepository, CommentService commentService) {
+    public MatchService(MatchRepository matchRepository, CommentRepository commentRepository) {
         this.matchRepository = matchRepository;
-        this.commentService = commentService;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional(readOnly = true)
@@ -43,7 +44,7 @@ public class MatchService {
 
     @Transactional
     public void delete(Match match) {
-        commentService.deleteByMatch(match);
+        this.commentRepository.deleteAll(this.commentRepository.findByMatchId(match.getId()));
         this.matchRepository.delete(match);
     }
 
