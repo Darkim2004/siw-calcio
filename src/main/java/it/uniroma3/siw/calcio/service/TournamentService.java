@@ -81,6 +81,26 @@ public class TournamentService {
     }
 
     @Transactional(readOnly = true)
+    public List<Partecipation> findPartecipationsByTournamentId(Long id) {
+        if (id == null) {
+            return List.of();
+        }
+
+        return partecipationRepository.findByTournament_Id(id).stream()
+                .sorted((p1, p2) -> {
+                    int pointsCompare = Integer.compare(p2.getPoints(), p1.getPoints());
+                    if (pointsCompare != 0) {
+                        return pointsCompare;
+                    }
+
+                    String teamName1 = p1.getTeam() == null ? "" : p1.getTeam().getName();
+                    String teamName2 = p2.getTeam() == null ? "" : p2.getTeam().getName();
+                    return teamName1.compareToIgnoreCase(teamName2);
+                })
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<Object[]> findTeamsWithPointsByTournamentId(Long id) {
         Tournament tournament = this.findById(id);
         if (tournament != null) {
