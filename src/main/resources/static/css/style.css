@@ -496,6 +496,32 @@ tbody td {
     color: var(--muted);
 }
 
+.error-page {
+    max-width: 760px;
+}
+
+.error-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 74px;
+    margin-bottom: 18px;
+    padding: 8px 13px;
+    border: 1px solid rgba(20, 83, 45, 0.24);
+    border-radius: 999px;
+    background: rgba(20, 83, 45, 0.08);
+    color: var(--accent);
+    font-family: 'Graduate', Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+.error-page .empty-state {
+    max-width: 560px;
+    line-height: 1.55;
+}
+
 .match-calendar {
     display: grid;
     gap: 12px;

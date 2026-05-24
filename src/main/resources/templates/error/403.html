@@ -15,13 +15,15 @@
             <a class="login-button" th:href="@{/login}">Login</a>
         </div>
 
-        <main class="content">
+        <main class="content error-page">
+            <div class="error-code">403</div>
             <h1>Access denied</h1>
             <p class="empty-state" th:text="${errorMessage != null ? errorMessage : 'You are not allowed to perform this action.'}">
                 You are not allowed to perform this action.
             </p>
 
-            <div class="actions">
+            <div class="actions detail-actions">
+                <a class="back-button" th:href="@{/}">Back to home page</a>
                 <a class="back-button" th:href="@{/matches}">Back to matches</a>
             </div>
         </main>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not found</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <a class="login-button" th:href="@{/login}">Login</a>
+        </div>
+
+        <main class="content error-page">
+            <div class="error-code">404</div>
+            <h1>Page not found</h1>
+            <p class="empty-state" th:text="${errorMessage != null ? errorMessage : 'The page you are looking for does not exist.'}">
+                The page you are looking for does not exist.
+            </p>
+
+            <div class="actions detail-actions">
+                <a class="back-button" th:href="@{/}">Back to home page</a>
+                <a class="add-button" th:href="@{/teams}">See clubs</a>
+                <a class="add-button" th:href="@{/tournaments}">See tournaments</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
