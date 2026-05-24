@@ -47,6 +47,9 @@ public class TeamController {
             playersByRole.put("Goalkeepers", filterPlayersByRole(players, RoleSoccer.GOALKEEPER));
             model.addAttribute("playersByRole", playersByRole);
         }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found");
+        }
 
         return "team/detail";
     }

@@ -52,11 +52,15 @@ public class CommentService {
     public void deleteComment(Long matchId, Long commentId, String authorUsername) {
         Comment comment = this.findByIdAndMatchId(commentId, matchId);
         User author = this.userService.findByUsername(authorUsername);
-        if (comment != null && comment.getAuthor().equals(author)) {
-            this.commentRepository.delete(comment);
+        if (comment == null ) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment or Match not found");
+        }
+        else if(!comment.getAuthor().equals(author)){
+                throw new AccessDeniedException();
         }
         else {
-            throw new AccessDeniedException();
+            
+            this.commentRepository.delete(comment);
         }
     }
 
@@ -69,12 +73,15 @@ public class CommentService {
     public void updateComment(Long matchId, Long commentId, String newText, String authorUsername) {
         Comment comment = this.findByIdAndMatchId(commentId, matchId);
         User author = this.userService.findByUsername(authorUsername);
-        if (comment != null && comment.getAuthor().equals(author)) {
+        if(comment == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment or Match not found");
+        }
+        else if (!comment.getAuthor().equals(author)) {
+            throw new AccessDeniedException();
+        }
+        else {
             comment.setText(newText);
             this.commentRepository.save(comment);
-        } 
-        else {
-            throw new AccessDeniedException();
         }
     }
 

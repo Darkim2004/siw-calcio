@@ -43,7 +43,11 @@ public class TournamentController {
 
     @GetMapping("/tournaments/{id}")
     public String getTournament(@PathVariable Long id, Model model) {
-        model.addAttribute("tournament", tournamentService.findById(id));
+        Tournament tournament = tournamentService.findById(id);
+        if (tournament == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tournament not found");
+        }
+        model.addAttribute("tournament", tournament);
         model.addAttribute("teamsWithPoints", tournamentService.findTeamsWithPointsByTournamentId(id));
         model.addAttribute("teamsWithLastPoints", tournamentService.findTeamsWithLastPointsByTournamentId(id));
         return "tournament/detail";
