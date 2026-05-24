@@ -1,13 +1,15 @@
 package it.uniroma3.siw.calcio.service;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.uniroma3.siw.calcio.model.Match;
+import it.uniroma3.siw.calcio.model.MatchState;
 import it.uniroma3.siw.calcio.model.Partecipation;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.model.Tournament;
@@ -21,14 +23,16 @@ public class TournamentService {
     private final TournamentRepository tournamentRepository;
     private final PartecipationRepository partecipationRepository;
     private final MatchRepository matchRepository;
-    private final MatchService matchService;
+
+    private static final int POINTS_FOR_WIN = 3;
+    private static final int POINTS_FOR_DRAW = 1;
+    private static final int POINTS_FOR_LOSS = 0;
 
     public TournamentService(TournamentRepository tournamentRepository, PartecipationRepository partecipationRepository,
-            MatchRepository matchRepository, MatchService matchService) {
+            MatchRepository matchRepository) {
         this.tournamentRepository = tournamentRepository;
         this.partecipationRepository = partecipationRepository;
         this.matchRepository = matchRepository;
-        this.matchService = matchService;
     }
 
     @Transactional(readOnly = true)
@@ -102,15 +106,47 @@ public class TournamentService {
 
     @Transactional(readOnly = true)
     public Map<Team, Integer> findTeamsWithLastPointsByTournamentId(Long id) {
-        Tournament tournament = this.findById(id);
-        if (tournament != null) {
-            return partecipationRepository.findByTournament_Id(id).stream()
-                    .collect(Collectors.toMap(
-                            partecipation -> (Team) partecipation.getTeam(),
-                            partecipation -> (Integer) matchService
-                                    .findLastMatchPointsByTeamAndTournament(partecipation.getTeam(), tournament)));
+        if (id == null) {
+            return Map.of();
         }
-        return null;
+
+        List<Partecipation> partecipations = partecipationRepository.findByTournament_Id(id);
+        List<Match> playedMatches = matchRepository.findByTournamentIdAndStateWithTeamsOrderByDateTimeDesc(id,
+                MatchState.PLAYED);
+
+        Map<Long, Integer> lastPointsByTeamId = new HashMap<>();
+        for (Match match : playedMatches) {
+            Team homeTeam = match.getHomeTeam();
+            Team awayTeam = match.getAwayTeam();
+            if (homeTeam == null || awayTeam == null || homeTeam.getId() == null || awayTeam.getId() == null) {
+                continue;
+            }
+
+            lastPointsByTeamId.putIfAbsent(homeTeam.getId(),
+                    calculateMatchPoints(match.getGoalsHome(), match.getGoalsAway()));
+            lastPointsByTeamId.putIfAbsent(awayTeam.getId(),
+                    calculateMatchPoints(match.getGoalsAway(), match.getGoalsHome()));
+        }
+
+        Map<Team, Integer> teamsWithLastPoints = new LinkedHashMap<>();
+        for (Partecipation partecipation : partecipations) {
+            Team team = partecipation.getTeam();
+            if (team != null && team.getId() != null) {
+                teamsWithLastPoints.put(team, lastPointsByTeamId.getOrDefault(team.getId(), POINTS_FOR_LOSS));
+            }
+        }
+
+        return teamsWithLastPoints;
+    }
+
+    private int calculateMatchPoints(int goalsFor, int goalsAgainst) {
+        if (goalsFor > goalsAgainst) {
+            return POINTS_FOR_WIN;
+        }
+        if (goalsFor == goalsAgainst) {
+            return POINTS_FOR_DRAW;
+        }
+        return POINTS_FOR_LOSS;
     }
 
     @Transactional(readOnly = true)

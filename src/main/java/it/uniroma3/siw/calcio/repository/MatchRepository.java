@@ -3,25 +3,30 @@ package it.uniroma3.siw.calcio.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import it.uniroma3.siw.calcio.model.Match;
-import it.uniroma3.siw.calcio.model.Team;
-import it.uniroma3.siw.calcio.model.Tournament;
+import it.uniroma3.siw.calcio.model.MatchState;
 
 public interface MatchRepository extends CrudRepository<Match, Long> {
 
-    @Query("""
-        select m
-        from Match m
-        where m.tournament = :tournament
-        and (m.homeTeam = :team or m.awayTeam = :team)
-        """)
-    List<Match> findByTournamentAndTeam(@Param("tournament") Tournament tournament, @Param("team") Team team);
-
     List<Match> findByTournament_Id(Long tournamentId);
+
+    @EntityGraph(attributePaths = { "homeTeam", "awayTeam" })
+    @Query("""
+        SELECT m
+        FROM Match m
+        WHERE m.tournament.id = :tournamentId
+        AND m.state = :state
+        AND m.dateTime IS NOT NULL
+        ORDER BY m.dateTime DESC
+        """)
+    List<Match> findByTournamentIdAndStateWithTeamsOrderByDateTimeDesc(
+            @Param("tournamentId") Long tournamentId,
+            @Param("state") MatchState state);
 
     List<Match> findByHomeTeam_IdOrAwayTeam_Id(Long id, Long id2);
 

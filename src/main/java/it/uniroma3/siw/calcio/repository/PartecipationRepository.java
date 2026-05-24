@@ -2,6 +2,7 @@ package it.uniroma3.siw.calcio.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +16,7 @@ public interface PartecipationRepository extends CrudRepository<Partecipation, L
     Partecipation findByTournament_IdAndTeam_Id(Long tournamentId, Long teamId);
 
 
+    @EntityGraph(attributePaths = "team")
     @Query("""
         select p
         from Partecipation p

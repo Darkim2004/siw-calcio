@@ -8,19 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.uniroma3.siw.calcio.model.Match;
-import it.uniroma3.siw.calcio.model.MatchState;
-import it.uniroma3.siw.calcio.model.Team;
-import it.uniroma3.siw.calcio.model.Tournament;
 import it.uniroma3.siw.calcio.repository.MatchRepository;
 
 @Service
 public class MatchService {
 
     private final MatchRepository matchRepository;
-
-    private final int POINTS_FOR_WIN = 3;
-    private final int POINTS_FOR_DRAW = 1;
-    private final int POINTS_FOR_LOSS = 0;
 
     public MatchService(MatchRepository matchRepository) {
         this.matchRepository = matchRepository;
@@ -77,39 +70,6 @@ public class MatchService {
         LocalDateTime fineGiorno = today.plusDays(1).atStartOfDay();
 
         return this.matchRepository.findFirstTodayMatches(limit, inizioGiorno, fineGiorno);
-    }
-
-    @Transactional(readOnly = true)
-    public Integer findLastMatchPointsByTeamAndTournament(Team team, Tournament tournament) {
-        List<Match> matches = this.matchRepository.findByTournamentAndTeam(tournament, team);
-        if (matches.isEmpty()) {
-            return 0;
-        }
-        Match lastMatch = matches.stream()
-                .filter(match -> match.getDateTime() != null)
-                .filter(match -> MatchState.PLAYED.equals(match.getState()))
-                .max((m1, m2) -> m1.getDateTime().compareTo(m2.getDateTime()))
-                .orElse(null);
-        if (lastMatch != null) {
-            if (lastMatch.getHomeTeam().equals(team)) {
-                if (lastMatch.getGoalsHome() > lastMatch.getGoalsAway()) {
-                    return POINTS_FOR_WIN;
-                } else if (lastMatch.getGoalsHome() == lastMatch.getGoalsAway()) {
-                    return POINTS_FOR_DRAW;
-                } else {
-                    return POINTS_FOR_LOSS;
-                }
-            } else if (lastMatch.getAwayTeam().equals(team)) {
-                if (lastMatch.getGoalsAway() > lastMatch.getGoalsHome()) {
-                    return POINTS_FOR_WIN;
-                } else if (lastMatch.getGoalsAway() == lastMatch.getGoalsHome()) {
-                    return POINTS_FOR_DRAW;
-                } else {
-                    return POINTS_FOR_LOSS;
-                }
-            }
-        }
-        return 0;
     }
 
 }
