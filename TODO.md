@@ -4,7 +4,5 @@
 - [ ] What happens when you delete a tournament to the partecipation entities?
 - [ ] Add a way to add/delete teams to a tournament
 - [ ] Modify various forms for matches/teams/tournaments/players with javascript front-end for research and filters
-- [ ] Check if join table for tournament and team is needed, or if it can be done with the partecipation table
-- [ ] 
 - [ ] Limit findFirstAlphabeticallyTournaments to 5 results via SQL query
 - [ ] add /admin/tournaments/{id}/team/add and /admin/tournaments/{id}/team/delete

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.uniroma3.siw.calcio.model.Match;
-import it.uniroma3.siw.calcio.model.Partecipation;
 import it.uniroma3.siw.calcio.model.Player;
 import it.uniroma3.siw.calcio.model.Team;
 import it.uniroma3.siw.calcio.repository.TeamRepository;
@@ -18,7 +17,6 @@ import it.uniroma3.siw.calcio.repository.TeamRepository;
 @Service
 public class TeamService {
 
-    private final PartecipationRepository partecipationRepository;
     private final PlayerRepository playerRepository;
     private final TeamRepository teamRepository;
     private final MatchRepository matchRepository;
@@ -26,7 +24,6 @@ public class TeamService {
     public TeamService(TeamRepository teamRepository, PlayerRepository playerRepository, PartecipationRepository partecipationRepository, MatchRepository matchRepository) {
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
-        this.partecipationRepository = partecipationRepository;
         this.matchRepository = matchRepository;
     }
 
