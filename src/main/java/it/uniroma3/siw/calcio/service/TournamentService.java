@@ -86,26 +86,14 @@ public class TournamentService {
             return List.of();
         }
 
-        return partecipationRepository.findByTournament_Id(id).stream()
-                .sorted((p1, p2) -> {
-                    int pointsCompare = Integer.compare(p2.getPoints(), p1.getPoints());
-                    if (pointsCompare != 0) {
-                        return pointsCompare;
-                    }
-
-                    String teamName1 = p1.getTeam() == null ? "" : p1.getTeam().getName();
-                    String teamName2 = p2.getTeam() == null ? "" : p2.getTeam().getName();
-                    return teamName1.compareToIgnoreCase(teamName2);
-                })
-                .toList();
+        return partecipationRepository.findByTournament_Id(id);
     }
 
     @Transactional(readOnly = true)
     public List<Object[]> findTeamsWithPointsByTournamentId(Long id) {
         Tournament tournament = this.findById(id);
         if (tournament != null) {
-            return tournament.getPartecipations().stream()
-                    .sorted((p1, p2) -> Integer.compare(p2.getPoints(), p1.getPoints()))
+            return partecipationRepository.findByTournament_Id(id).stream()
                     .map(partecipation -> new Object[] { partecipation.getTeam(), partecipation.getPoints() })
                     .toList();
         }
@@ -116,7 +104,7 @@ public class TournamentService {
     public Map<Team, Integer> findTeamsWithLastPointsByTournamentId(Long id) {
         Tournament tournament = this.findById(id);
         if (tournament != null) {
-            return tournament.getPartecipations().stream()
+            return partecipationRepository.findByTournament_Id(id).stream()
                     .collect(Collectors.toMap(
                             partecipation -> (Team) partecipation.getTeam(),
                             partecipation -> (Integer) matchService
@@ -127,14 +115,10 @@ public class TournamentService {
 
     @Transactional(readOnly = true)
     public Partecipation findPartecipationByTeamAndTournamentId(Team team, Long tournamentId) {
-        Tournament tournament = this.findById(tournamentId);
-        if (tournament != null && team != null && tournament.getPartecipations() != null) {
-            return tournament.getPartecipations().stream()
-                    .filter(partecipation -> team.equals(partecipation.getTeam()))
-                    .findFirst()
-                    .orElse(null);
+        if (team == null || team.getId() == null || tournamentId == null) {
+            return null;
         }
-        return null;
+        return partecipationRepository.findByTournament_IdAndTeam_Id(tournamentId, team.getId());
     }
 
     @Transactional

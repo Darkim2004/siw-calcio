@@ -1,6 +1,7 @@
 package it.uniroma3.siw.calcio.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -53,28 +54,29 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public List<Match> findAllSortedByDateTime() {
-        List<Match> allMatches = this.findAll();
-        return allMatches.stream()
-                .filter(match -> match.getDateTime() != null)
-                .sorted((m1, m2) -> m1.getDateTime().compareTo(m2.getDateTime()))
-                .toList();
+        return matchRepository.findAllSortedByDateTime();
     }
 
     @Transactional(readOnly = true)
     public List<Match> findTodayMatches() {
         LocalDate today = LocalDate.now();
-        return this.findAll().stream()
-                .filter(match -> match.getDateTime() != null)
-                .filter(match -> match.getDateTime().toLocalDate().equals(today))
-                .sorted((m1, m2) -> m1.getDateTime().compareTo(m2.getDateTime()))
-                .toList();
+        LocalDateTime inizioGiorno = today.atStartOfDay();
+        LocalDateTime fineGiorno = today.plusDays(1).atStartOfDay();
+
+        return this.matchRepository.findTodayMatches(inizioGiorno, fineGiorno);
     }
 
     @Transactional(readOnly = true)
     public List<Match> findFirstTodayMatches(int limit) {
-        return this.findTodayMatches().stream()
-                .limit(limit)
-                .toList();
+        if (limit <= 0) {
+            return List.of();
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDateTime inizioGiorno = today.atStartOfDay();
+        LocalDateTime fineGiorno = today.plusDays(1).atStartOfDay();
+
+        return this.matchRepository.findFirstTodayMatches(limit, inizioGiorno, fineGiorno);
     }
 
     @Transactional(readOnly = true)
