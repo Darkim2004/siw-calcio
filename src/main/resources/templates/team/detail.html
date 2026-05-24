@@ -42,15 +42,21 @@
                     <h2 th:text="${roleEntry.key}">Role</h2>
 
                     <div class="players-list" th:if="${not #lists.isEmpty(roleEntry.value)}">
-                        <article class="player-card" th:each="player : ${roleEntry.value}">
-                            <img class="player-photo"
-                                 th:with="photoPath=${#strings.isEmpty(player.photo) ? '/images/Portrait_Placeholder.png' : player.photo}"
-                                 th:src="@{${photoPath}}"
-                                 th:alt="|Foto ${player.firstName} ${player.lastName}|">
-                            <div>
-                                <span class="player-name" th:text="|${player.firstName} ${player.lastName}|">Player Name</span>
-                                <span class="player-info" th:if="${player.squadNumber > 0}" th:text="${player.squadNumber}">9</span>
+                        <article class="player-card" th:each="player : ${roleEntry.value}" th:classappend="${isAdmin} ? ' player-card-editable' : ''">
+                            <div class="player-card-main">
+                                <img class="player-photo"
+                                     th:with="photoPath=${#strings.isEmpty(player.photo) ? '/images/Portrait_Placeholder.png' : player.photo}"
+                                     th:src="@{${photoPath}}"
+                                     th:alt="|Foto ${player.firstName} ${player.lastName}|">
+                                <div>
+                                    <span class="player-name" th:text="|${player.firstName} ${player.lastName}|">Player Name</span>
+                                    <span class="player-info" th:if="${player.squadNumber > 0}" th:text="${player.squadNumber}">9</span>
+                                </div>
                             </div>
+
+                            <a class="add-button compact-button"
+                               th:if="${isAdmin}"
+                               th:href="@{/admin/teams/{teamId}/players/{playerId}/edit(teamId=${team.id}, playerId=${player.id})}">Edit</a>
                         </article>
                     </div>
 

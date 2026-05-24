@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${player != null ? 'Edit ' + player.firstName + ' ' + player.lastName : 'Edit player'}">Edit player</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="login-button" type="submit">Logout</button>
+            </form>
+        </div>
+
+        <main class="card">
+            <h1>Edit player</h1>
+            <p class="meta" th:text="${team.name}">Team name</p>
+
+            <form class="auth-form"
+                  th:action="@{/admin/teams/{teamId}/players/{playerId}(teamId=${team.id}, playerId=${player.id})}"
+                  th:object="${player}"
+                  method="post">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="form-field">
+                    <label for="firstName">First name</label>
+                    <input id="firstName" type="text" th:field="*{firstName}" required autofocus>
+                    <span class="field-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First name error</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="lastName">Last name</label>
+                    <input id="lastName" type="text" th:field="*{lastName}" required>
+                    <span class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name error</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="birthDate">Birth date</label>
+                    <input id="birthDate" type="date" th:field="*{birthDate}">
+                    <span class="field-error" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}">Birth date error</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="role">Role</label>
+                    <select id="role" th:field="*{role}">
+                        <option value="">Select role</option>
+                        <option th:each="role : ${roles}"
+                                th:value="${role}"
+                                th:text="${role}">FORWARD</option>
+                    </select>
+                    <span class="field-error" th:if="${#fields.hasErrors('role')}" th:errors="*{role}">Role error</span>
+                </div>
+
+                <div class="form-actions">
+                    <div class="form-field score-field">
+                        <label for="squadNumber">Squad number</label>
+                        <input id="squadNumber" type="number" th:field="*{squadNumber}" min="0" max="99">
+                        <span class="field-error" th:if="${#fields.hasErrors('squadNumber')}" th:errors="*{squadNumber}">Squad number error</span>
+                    </div>
+
+                    <div class="form-field score-field">
+                        <label for="height">Height</label>
+                        <input id="height" type="number" th:field="*{height}" min="0">
+                        <span class="field-error" th:if="${#fields.hasErrors('height')}" th:errors="*{height}">Height error</span>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="photo">Photo path</label>
+                    <input id="photo" type="text" th:field="*{photo}" placeholder="/images/player-photo.png">
+                    <span class="field-error" th:if="${#fields.hasErrors('photo')}" th:errors="*{photo}">Photo error</span>
+                </div>
+
+                <div class="form-actions">
+                    <button class="add-button form-submit" type="submit">Save changes</button>
+                    <a class="back-button" th:href="@{/teams/{id}(id=${team.id})}">Back to team</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
