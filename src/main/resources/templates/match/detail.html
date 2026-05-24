@@ -91,7 +91,9 @@
                 </form>
 
                 <div class="comments-list" th:if="${not #lists.isEmpty(comments)}">
-                    <article class="comment-card" th:each="commentItem : ${comments}">
+                    <article class="comment-card"
+                             th:each="commentItem : ${comments}"
+                             th:with="isEditing=${editingCommentId != null and editingCommentId == commentItem.id}">
                         <div class="comment-head">
                             <strong th:text="${commentItem.author.username}">username</strong>
                             <span th:if="${commentItem.creationDateTime != null}"
@@ -101,16 +103,30 @@
                         <p class="comment-text" th:text="${commentItem.text}">Comment text</p>
 
                         <div class="comment-actions" th:if="${userdetails != null and userdetails.username == commentItem.author.username}">
-                            <form class="comment-edit-form"
-                                  th:action="@{/matches/{matchId}/comments/{commentId}/update(matchId=${match.id}, commentId=${commentItem.id})}"
-                                  method="post">
-                                <div class="form-field">
-                                    <label th:for="|comment-edit-${commentItem.id}|">Edit comment</label>
-                                    <textarea th:id="|comment-edit-${commentItem.id}|" name="text" required th:text="${commentItem.text}">Comment text</textarea>
-                                </div>
-                                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <button class="add-button compact-button" type="submit">Save</button>
-                            </form>
+                            <details class="comment-edit-panel" th:open="${isEditing}">
+                                <summary class="add-button compact-button comment-edit-toggle">Edit</summary>
+
+                                <form class="comment-edit-form"
+                                      th:id="|comment-edit-panel-${commentItem.id}|"
+                                      th:action="@{/matches/{matchId}/comments/{commentId}/update(matchId=${match.id}, commentId=${commentItem.id})}"
+                                      th:object="${comment}"
+                                      method="post">
+                                    <div class="form-field">
+                                        <label th:for="|comment-edit-${commentItem.id}|">Edit comment</label>
+                                        <textarea th:id="|comment-edit-${commentItem.id}|"
+                                                  name="text"
+                                                  required
+                                                  th:text="${isEditing ? comment.text : commentItem.text}">Comment text</textarea>
+                                        <span class="field-error"
+                                              th:if="${isEditing and #fields.hasErrors('text')}"
+                                              th:errors="*{text}">Comment error</span>
+                                    </div>
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <div class="form-actions comment-edit-controls">
+                                        <button class="add-button compact-button" type="submit">Save</button>
+                                    </div>
+                                </form>
+                            </details>
 
                             <form class="delete-form"
                                   th:action="@{/matches/{matchId}/comments/{commentId}/delete(matchId=${match.id}, commentId=${commentItem.id})}"

@@ -72,6 +72,7 @@ public class CommentController {
         }
         if (bindingResult.hasErrors()) {
             addMatchDetailAttributes(matchId, model);
+            model.addAttribute("editingCommentId", commentId);
             return "match/detail";
         }
 

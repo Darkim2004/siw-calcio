@@ -125,6 +125,8 @@ h2 {
     background: transparent;
     color: var(--accent);
     border: 2px solid var(--accent);
+    cursor: pointer;
+    font: inherit;
 }
 
 .add-button:hover,
@@ -737,14 +739,38 @@ tbody td {
 }
 
 .comment-actions {
-    display: grid;
-    gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
     margin-top: 16px;
+}
+
+.comment-edit-panel {
+    flex: 0 0 auto;
+}
+
+.comment-edit-panel[open] {
+    flex: 1 1 100%;
+}
+
+.comment-edit-toggle {
+    cursor: pointer;
+    list-style: none;
+}
+
+.comment-edit-toggle::-webkit-details-marker {
+    display: none;
 }
 
 .comment-edit-form {
     display: grid;
     gap: 12px;
+    margin-top: 12px;
+}
+
+.comment-edit-controls {
+    gap: 10px;
 }
 
 .team-header {
