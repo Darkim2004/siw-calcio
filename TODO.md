@@ -1,3 +1,2 @@
 - [ ] Adjust user login button when already logged in
 - [ ] Modify various forms for matches/teams/tournaments/players with javascript front-end for research and filters
-- [ ] Add referee management (CRUD) and assign referees to matches
