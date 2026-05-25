@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${formTitle != null ? formTitle : 'New referee'}">New referee</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <a th:href="@{/}">
+                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
+            </a>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="login-button" type="submit">Logout</button>
+            </form>
+        </div>
+
+        <main class="card">
+            <h1 th:text="${formTitle != null ? formTitle : 'New referee'}">New referee</h1>
+
+            <form class="auth-form"
+                  th:action="@{${formAction}}"
+                  th:object="${referee}"
+                  method="post">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="form-field">
+                    <label for="firstName">First name</label>
+                    <input id="firstName" type="text" th:field="*{firstName}" required autofocus>
+                    <span class="field-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First name error</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="lastName">Last name</label>
+                    <input id="lastName" type="text" th:field="*{lastName}" required>
+                    <span class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name error</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="refereeCode">Referee code</label>
+                    <input id="refereeCode" type="number" th:field="*{refereeCode}" min="1" required>
+                    <span class="field-error" th:if="${#fields.hasErrors('refereeCode')}" th:errors="*{refereeCode}">Referee code error</span>
+                </div>
+
+                <div class="form-actions">
+                    <button class="add-button form-submit" type="submit" th:text="${submitLabel != null ? submitLabel : 'Create referee'}">Create referee</button>
+                    <a class="back-button" th:href="@{/admin/referees}">Back</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

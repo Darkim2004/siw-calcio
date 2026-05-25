@@ -163,7 +163,7 @@ public class MatchController {
     private void addMatchFormAttributes(Model model) {
         model.addAttribute("teams", teamService.findAll());
         model.addAttribute("tournaments", tournamentService.findAll());
-        model.addAttribute("referees", refereeService.findAll());
+        model.addAttribute("referees", refereeService.findAllSortedByName());
         model.addAttribute("matchStates", MatchState.values());
     }
 

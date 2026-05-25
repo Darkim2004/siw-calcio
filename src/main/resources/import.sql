@@ -41,6 +41,11 @@ INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, 
 INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, squad_number, team_id) VALUES (nextval('player_seq'), 'Amir', 'Rrahmani', '1994-02-24', 'DEFENDER', '', 192, 13, (SELECT id FROM team WHERE name = 'Napoli'));
 INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, squad_number, team_id) VALUES (nextval('player_seq'), 'Alex', 'Meret', '1997-03-22', 'GOALKEEPER', '', 190, 1, (SELECT id FROM team WHERE name = 'Napoli'));
 
+-- Test data for referees
+INSERT INTO referee (id, first_name, last_name, referee_code) VALUES (nextval('referee_seq'), 'Daniele', 'Orsato', 1001);
+INSERT INTO referee (id, first_name, last_name, referee_code) VALUES (nextval('referee_seq'), 'Maria', 'Sole Ferrieri Caputi', 1002);
+INSERT INTO referee (id, first_name, last_name, referee_code) VALUES (nextval('referee_seq'), 'Fabio', 'Maresca', 1003);
+
 -- Test data for participations
 INSERT INTO partecipation (id, tournament_id, team_id, points) VALUES (nextval('partecipation_seq'), (SELECT id FROM tournament WHERE name = 'Serie A 2025-2026' AND year = 2026), (SELECT id FROM team WHERE name = 'Inter'), 82);
 INSERT INTO partecipation (id, tournament_id, team_id, points) VALUES (nextval('partecipation_seq'), (SELECT id FROM tournament WHERE name = 'Serie A 2025-2026' AND year = 2026), (SELECT id FROM team WHERE name = 'Juventus'), 79);

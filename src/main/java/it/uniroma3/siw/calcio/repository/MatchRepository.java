@@ -30,6 +30,8 @@ public interface MatchRepository extends CrudRepository<Match, Long> {
 
     List<Match> findByHomeTeam_IdOrAwayTeam_Id(Long id, Long id2);
 
+    List<Match> findByReferee_Id(Long refereeId);
+
     @Query("""
         SELECT m
         FROM Match m
