@@ -34,7 +34,7 @@ public class Team {
     private List<Partecipation> partecipations;
 
     @Lazy
-    @OneToMany(mappedBy = "team", orphanRemoval = true)
+    @OneToMany(mappedBy = "team")
     private List<Player> players;
 
     public Long getId() {

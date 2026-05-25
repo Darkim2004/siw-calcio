@@ -143,7 +143,8 @@ public class PlayerController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        playerService.delete(player);
+        player.setTeam(null);
+        playerService.save(player);
         return "redirect:/admin/teams/" + teamId + "/edit";
     }
 

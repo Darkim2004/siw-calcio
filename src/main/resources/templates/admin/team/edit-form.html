@@ -101,10 +101,10 @@
                         <form class="delete-form"
                               th:action="@{/admin/teams/{id}/players/remove(id=${team.id})}"
                               method="post"
-                              onsubmit="return confirm('Remove this player permanently from the database?');">
+                              onsubmit="return confirm('Remove this player from the team roster?');">
                             <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <input type="hidden" name="playerId" th:value="${player.id}">
-                            <button class="danger-button compact-button" type="submit">Remove</button>
+                            <button class="danger-button compact-button" type="submit">Remove from team</button>
                         </form>
                     </article>
                 </div>
