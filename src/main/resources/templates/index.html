@@ -60,6 +60,24 @@
                 </div>
             </section>
 
+            <section class="home-section" th:if="${isAdmin}">
+                <h1>Admin management</h1>
+
+                <div class="management-grid">
+                    <article class="management-card">
+                        <h2>Players</h2>
+                        <p class="meta">Create, edit, delete, and review players by role.</p>
+                        <a class="club-info-button" th:href="@{/admin/players}">Manage players</a>
+                    </article>
+
+                    <article class="management-card">
+                        <h2>Referees</h2>
+                        <p class="meta">Create, edit, delete, and review match referees.</p>
+                        <a class="club-info-button" th:href="@{/admin/referees}">Manage referees</a>
+                    </article>
+                </div>
+            </section>
+
             <section class="home-section">
                 <h1>Tournaments</h1>
 
