@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${team != null ? 'New player for ' + team.name : 'New player'}">New player</title>
+    <title th:text="${formTitle != null ? formTitle : 'New player'}">New player</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -19,14 +19,18 @@
         </div>
 
         <main class="card">
-            <h1>New player</h1>
-            <p class="meta" th:text="${team.name}">Team name</p>
+            <h1 th:text="${formTitle != null ? formTitle : 'New player'}">New player</h1>
+            <p class="meta" th:if="${teamContext}" th:text="${team.name}">Team name</p>
 
             <form class="auth-form"
-                  th:action="@{/admin/teams/{id}/players(id=${teamId})}"
+                  th:action="@{${formAction}}"
                   th:object="${player}"
                   method="post">
                 <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="alert alert-error" th:if="${#fields.hasGlobalErrors()}">
+                    <p th:each="error : ${#fields.globalErrors()}" th:text="${error}">Player error</p>
+                </div>
 
                 <div class="form-field">
                     <label for="firstName">First name</label>
@@ -38,6 +42,17 @@
                     <label for="lastName">Last name</label>
                     <input id="lastName" type="text" th:field="*{lastName}" required>
                     <span class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name error</span>
+                </div>
+
+                <div class="form-field" th:if="${!teamContext}">
+                    <label for="teamId">Team</label>
+                    <select id="teamId" name="teamId">
+                        <option value="">Free agent</option>
+                        <option th:each="teamOption : ${teams}"
+                                th:value="${teamOption.id}"
+                                th:text="${teamOption.name}"
+                                th:selected="${player.team != null and player.team.id == teamOption.id}">Team</option>
+                    </select>
                 </div>
 
                 <div class="form-field">
@@ -78,8 +93,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <button class="add-button form-submit" type="submit">Create player</button>
-                    <a class="back-button" th:href="@{/admin/teams/{id}/edit(id=${teamId})}">Back to team editor</a>
+                    <button class="add-button form-submit" type="submit" th:text="${submitLabel != null ? submitLabel : 'Create player'}">Create player</button>
+                    <a class="back-button" th:href="@{${cancelUrl}}">Back</a>
                 </div>
             </form>
         </main>

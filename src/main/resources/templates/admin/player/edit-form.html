@@ -19,14 +19,18 @@
         </div>
 
         <main class="card">
-            <h1>Edit player</h1>
-            <p class="meta" th:text="${team.name}">Team name</p>
+            <h1 th:text="${formTitle != null ? formTitle : 'Edit player'}">Edit player</h1>
+            <p class="meta" th:if="${teamContext}" th:text="${team.name}">Team name</p>
 
             <form class="auth-form"
-                  th:action="@{/admin/teams/{teamId}/players/{playerId}(teamId=${team.id}, playerId=${player.id})}"
+                  th:action="@{${formAction}}"
                   th:object="${player}"
                   method="post">
                 <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="alert alert-error" th:if="${#fields.hasGlobalErrors()}">
+                    <p th:each="error : ${#fields.globalErrors()}" th:text="${error}">Player error</p>
+                </div>
 
                 <div class="form-field">
                     <label for="firstName">First name</label>
@@ -38,6 +42,17 @@
                     <label for="lastName">Last name</label>
                     <input id="lastName" type="text" th:field="*{lastName}" required>
                     <span class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name error</span>
+                </div>
+
+                <div class="form-field" th:if="${!teamContext}">
+                    <label for="teamId">Team</label>
+                    <select id="teamId" name="teamId">
+                        <option value="">Free agent</option>
+                        <option th:each="teamOption : ${teams}"
+                                th:value="${teamOption.id}"
+                                th:text="${teamOption.name}"
+                                th:selected="${player.team != null and player.team.id == teamOption.id}">Team</option>
+                    </select>
                 </div>
 
                 <div class="form-field">
@@ -78,8 +93,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <button class="add-button form-submit" type="submit">Save changes</button>
-                    <a class="back-button" th:href="@{/teams/{id}(id=${team.id})}">Back to team</a>
+                    <button class="add-button form-submit" type="submit" th:text="${submitLabel != null ? submitLabel : 'Save changes'}">Save changes</button>
+                    <a class="back-button" th:href="@{${cancelUrl}}">Back</a>
                 </div>
             </form>
         </main>
