@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,17 +12,17 @@
 
         <main class="card auth-card">
             <section class="auth-intro">
-                <span class="auth-kicker">Area riservata</span>
+                <span class="auth-kicker">Private area</span>
                 <h1>Login</h1>
-                <p class="meta">Accedi a SIW Calcio per gestire tornei, squadre e calendario delle partite.</p>
+                <p class="meta">Sign in to SIW Calcio to manage tournaments, teams, and the match calendar.</p>
             </section>
 
             <section class="auth-panel" th:if="${userdetails == null}">
                 <div class="alert alert-error" th:if="${param.error}">
-                    Credenziali non valide. Controlla username e password.
+                    Invalid credentials. Check your username and password.
                 </div>
                 <div class="alert alert-success" th:if="${param.logout}">
-                    Logout effettuato correttamente.
+                    You have been logged out successfully.
                 </div>
 
                 <form class="auth-form" th:action="@{/perform-login}" method="post">
@@ -38,18 +38,18 @@
                         <input id="password" name="password" type="password" autocomplete="current-password" required>
                     </div>
 
-                    <button class="login-button auth-submit" type="submit">Accedi</button>
+                    <button class="login-button auth-submit" type="submit">Sign in</button>
                 </form>
 
                 <p class="auth-switch">
-                    Non hai un account? <a th:href="@{/register}">Registrati</a>
+                    Do not have an account? <a th:href="@{/register}">Register</a>
                 </p>
             </section>
 
             <section class="auth-panel" th:if="${userdetails != null}">
-                <p class="meta">Sei gia autenticato come <strong th:text="${userdetails.username}">utente</strong>.</p>
+                <p class="meta">You are already signed in as <strong th:text="${userdetails.username}">user</strong>.</p>
                 <div class="actions auth-actions">
-                    <a class="add-button" th:href="@{/}">Vai alla home</a>
+                    <a class="add-button" th:href="@{/}">Go to home</a>
                     <form th:replace="~{components :: logoutForm('back-button auth-link-button')}"></form>
                 </div>
             </section>

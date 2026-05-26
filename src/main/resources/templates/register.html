@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrazione | SIW Calcio</title>
+    <title>Register | SIW Calcio</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -12,9 +12,9 @@
 
         <main class="card auth-card">
             <section class="auth-intro">
-                <span class="auth-kicker">Nuovo account</span>
-                <h1>Registrazione</h1>
-                <p class="meta">Crea un profilo per accedere all'area riservata di SIW Calcio.</p>
+                <span class="auth-kicker">New account</span>
+                <h1>Register</h1>
+                <p class="meta">Create a profile to access the private area of SIW Calcio.</p>
             </section>
 
             <section class="auth-panel">
@@ -24,20 +24,20 @@
                     <div class="form-field">
                         <label for="username">Username</label>
                         <input id="username" th:field="*{username}" type="text" autocomplete="username" required autofocus>
-                        <span class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Errore username</span>
+                        <span class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</span>
                     </div>
 
                     <div class="form-field">
                         <label for="password">Password</label>
                         <input id="password" th:field="*{password}" type="password" autocomplete="new-password" required>
-                        <span class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Errore password</span>
+                        <span class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</span>
                     </div>
 
-                    <button class="login-button auth-submit" type="submit">Registrati</button>
+                    <button class="login-button auth-submit" type="submit">Register</button>
                 </form>
 
                 <p class="auth-switch">
-                    Hai gia un account? <a th:href="@{/login}">Accedi</a>
+                    Already have an account? <a th:href="@{/login}">Sign in</a>
                 </p>
             </section>
         </main>
