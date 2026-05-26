@@ -8,12 +8,7 @@
 </head>
 <body>
     <div class="page">
-        <div class="topbar">
-            <a th:href="@{/}">
-                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
-            </a>
-            <a class="login-button" th:href="@{/login}">Login</a>
-        </div>
+        <div th:replace="~{components :: publicTopbar}"></div>
 
         <main class="content">
             <section class="home-section">

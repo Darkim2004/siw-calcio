@@ -8,12 +8,7 @@
 </head>
 <body>
     <div class="page">
-        <div class="topbar">
-            <a th:href="@{/}">
-                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
-            </a>
-            <a class="login-button" th:href="@{/login}">Login</a>
-        </div>
+        <div th:replace="~{components :: publicTopbar}"></div>
 
         <main class="content error-page">
             <div class="error-code">404</div>
@@ -23,7 +18,7 @@
             </p>
 
             <div class="actions detail-actions">
-                <a class="back-button" th:href="@{/}">Back to home page</a>
+                <a th:replace="~{components :: backHomeButton}"></a>
                 <a class="add-button" th:href="@{/teams}">See clubs</a>
                 <a class="add-button" th:href="@{/tournaments}">See tournaments</a>
             </div>

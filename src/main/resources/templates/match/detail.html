@@ -8,12 +8,7 @@
 </head>
 <body>
     <div class="page">
-        <div class="topbar">
-            <a th:href="@{/}">
-                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
-            </a>
-            <a class="login-button" th:href="@{/login}">Login</a>
-        </div>
+        <div th:replace="~{components :: publicTopbar}"></div>
 
         <main class="content" th:if="${match != null}">
             <section class="match-detail-header">
@@ -84,7 +79,7 @@
                         <textarea id="comment-text" th:field="*{text}" required></textarea>
                         <span class="field-error" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">Comment error</span>
                     </div>
-                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input th:replace="~{components :: csrfInput}">
                     <div class="form-actions">
                         <button class="login-button form-submit" type="submit">Post comment</button>
                     </div>
@@ -121,7 +116,7 @@
                                               th:if="${isEditing and #fields.hasErrors('text')}"
                                               th:errors="*{text}">Comment error</span>
                                     </div>
-                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input th:replace="~{components :: csrfInput}">
                                     <div class="form-actions comment-edit-controls">
                                         <button class="add-button compact-button" type="submit">Save</button>
                                     </div>
@@ -132,7 +127,7 @@
                                   th:action="@{/matches/{matchId}/comments/{commentId}/delete(matchId=${match.id}, commentId=${commentItem.id})}"
                                   method="post"
                                   onsubmit="return confirm('Are you sure you want to delete this comment?');">
-                                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <input th:replace="~{components :: csrfInput}">
                                 <button class="danger-button compact-button" type="submit">Delete</button>
                             </form>
                         </div>
@@ -151,7 +146,7 @@
                           th:action="@{/admin/matches/{id}/delete(id=${match.id})}"
                           method="post"
                           onsubmit="return confirm('Are you sure you want to delete this match?');">
-                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <input th:replace="~{components :: csrfInput}">
                         <button class="danger-button" type="submit">Delete match</button>
                     </form>
                 </div>

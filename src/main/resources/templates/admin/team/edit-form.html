@@ -8,15 +8,7 @@
 </head>
 <body>
     <div class="page">
-        <div class="topbar">
-            <a th:href="@{/}">
-                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
-            </a>
-            <form th:action="@{/logout}" method="post">
-                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <button class="login-button" type="submit">Logout</button>
-            </form>
-        </div>
+        <div th:replace="~{components :: adminTopbar}"></div>
 
         <main class="content team-editor">
             <div class="editor-heading">
@@ -31,7 +23,7 @@
                           th:action="@{/admin/teams/{id}/delete(id=${team.id})}"
                           method="post"
                           onsubmit="return confirm('Are you sure you want to delete this team?');">
-                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <input th:replace="~{components :: csrfInput}">
                         <button class="danger-button" type="submit">Delete team</button>
                     </form>
                 </div>
@@ -44,7 +36,7 @@
                       th:action="@{/admin/teams/{id}(id=${team.id})}"
                       th:object="${team}"
                       method="post">
-                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input th:replace="~{components :: csrfInput}">
 
                     <div class="form-grid">
                         <div class="form-field">
@@ -102,7 +94,7 @@
                               th:action="@{/admin/teams/{id}/players/remove(id=${team.id})}"
                               method="post"
                               onsubmit="return confirm('Remove this player from the team roster?');">
-                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <input th:replace="~{components :: csrfInput}">
                             <input type="hidden" name="playerId" th:value="${player.id}">
                             <button class="danger-button compact-button" type="submit">Remove from team</button>
                         </form>
@@ -119,7 +111,7 @@
                       th:if="${not #lists.isEmpty(players)}"
                       th:action="@{/admin/teams/{id}/players/add(id=${team.id})}"
                       method="post">
-                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input th:replace="~{components :: csrfInput}">
 
                     <div class="form-field inline-select-field">
                         <label for="playerId">Player</label>

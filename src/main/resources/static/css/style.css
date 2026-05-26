@@ -114,10 +114,18 @@ h2 {
     color: #ffffff;
     cursor: pointer;
     font: inherit;
+    line-height: 1.2;
 }
 
 .login-button:hover {
     background: var(--accent-hover);
+}
+
+.topbar .login-button,
+.topbar .back-button {
+    max-width: min(60vw, 320px);
+    overflow-wrap: anywhere;
+    text-align: center;
 }
 
 .add-button,

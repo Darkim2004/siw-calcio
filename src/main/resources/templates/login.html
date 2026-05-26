@@ -8,12 +8,7 @@
 </head>
 <body>
     <div class="page">
-        <div class="topbar">
-            <a th:href="@{/}">
-                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo SIW Calcio">
-            </a>
-            <a class="back-button" th:href="@{/}">Home</a>
-        </div>
+        <div th:replace="~{components :: homeTopbar}"></div>
 
         <main class="card auth-card">
             <section class="auth-intro">
@@ -31,7 +26,7 @@
                 </div>
 
                 <form class="auth-form" th:action="@{/perform-login}" method="post">
-                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input th:replace="~{components :: csrfInput}">
 
                     <div class="form-field">
                         <label for="username">Username</label>
@@ -55,10 +50,7 @@
                 <p class="meta">Sei gia autenticato come <strong th:text="${userdetails.username}">utente</strong>.</p>
                 <div class="actions auth-actions">
                     <a class="add-button" th:href="@{/}">Vai alla home</a>
-                    <form th:action="@{/logout}" method="post">
-                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <button class="back-button auth-link-button" type="submit">Logout</button>
-                    </form>
+                    <form th:replace="~{components :: logoutForm('back-button auth-link-button')}"></form>
                 </div>
             </section>
         </main>

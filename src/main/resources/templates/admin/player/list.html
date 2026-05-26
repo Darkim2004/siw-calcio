@@ -8,15 +8,7 @@
 </head>
 <body>
     <div class="page">
-        <div class="topbar">
-            <a th:href="@{/}">
-                <img class="site-logo" th:src="@{/images/SiwCalcio_logo.png}" alt="Logo sito">
-            </a>
-            <form th:action="@{/logout}" method="post">
-                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <button class="login-button" type="submit">Logout</button>
-            </form>
-        </div>
+        <div th:replace="~{components :: adminTopbar}"></div>
 
         <main class="content">
             <div class="editor-heading">
@@ -59,7 +51,7 @@
                                       th:action="@{/admin/players/{id}/delete(id=${player.id})}"
                                       method="post"
                                       onsubmit="return confirm('Are you sure you want to delete this player?');">
-                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input th:replace="~{components :: csrfInput}">
                                     <button class="danger-button compact-button" type="submit">Delete</button>
                                 </form>
                             </div>
@@ -73,7 +65,7 @@
             <p class="empty-state" th:if="${!hasPlayers}">No players are currently available.</p>
 
             <div class="actions detail-actions">
-                <a class="back-button" th:href="@{/}">Back to home page</a>
+                <a th:replace="~{components :: backHomeButton}"></a>
             </div>
         </main>
     </div>
