@@ -100,15 +100,28 @@ public class DemoDataSeeder implements ApplicationRunner {
     }
 
     private void ensureAdminUser() {
-        if (userRepository.findByUsername(adminUsername) != null) {
+        User admin = userRepository.findByUsername(adminUsername);
+        if (admin == null) {
+            admin = new User();
+            admin.setUsername(adminUsername);
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            admin.setRole(RoleWeb.ROLE_ADMIN);
+            userRepository.save(admin);
             return;
         }
 
-        User admin = new User();
-        admin.setUsername(adminUsername);
-        admin.setPassword(passwordEncoder.encode(adminPassword));
-        admin.setRole(RoleWeb.ROLE_ADMIN);
-        userRepository.save(admin);
+        boolean changed = false;
+        if (!passwordEncoder.matches(adminPassword, admin.getPassword())) {
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            changed = true;
+        }
+        if (admin.getRole() != RoleWeb.ROLE_ADMIN) {
+            admin.setRole(RoleWeb.ROLE_ADMIN);
+            changed = true;
+        }
+        if (changed) {
+            userRepository.save(admin);
+        }
     }
 
     private boolean domainTablesAreEmpty() {
