@@ -77,14 +77,17 @@ public class DemoDataSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        boolean hasAdminPassword = adminPassword != null && !adminPassword.isBlank();
+        if (hasAdminPassword) {
+            ensureAdminUser();
+        }
+
         if (!seedDemoData) {
             return;
         }
-        if (adminPassword == null || adminPassword.isBlank()) {
+        if (!hasAdminPassword) {
             throw new IllegalStateException("APP_ADMIN_PASSWORD is required when APP_SEED_DEMO_DATA=true");
         }
-
-        ensureAdminUser();
 
         if (!domainTablesAreEmpty()) {
             return;
