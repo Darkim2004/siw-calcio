@@ -7,7 +7,7 @@ INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament
 INSERT INTO tournament (id, name, year, description) VALUES (nextval('tournament_seq'), 'Summer Cup 2026', 2026, 'Summer football tournament');
 
 -- Test data for teams
-INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'AS Roma', 1927, 'Roma');
+INSERT INTO team (id, name, foundation_year, city, logo) VALUES (nextval('team_seq'), 'AS Roma', 1927, 'Roma', '/uploads/squadre/c6fc104f-4fb0-4e42-a782-2a8bf2397854.png');
 INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Inter', 1908, 'Milano');
 INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Juventus', 1897, 'Torino');
 INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Milan', 1899, 'Milano');
@@ -16,7 +16,7 @@ INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 
 INSERT INTO team (id, name, foundation_year, city) VALUES (nextval('team_seq'), 'Lazio', 1900, 'Roma');
 
 -- Test data for players
-INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, squad_number, team_id) VALUES (nextval('player_seq'), 'Paulo', 'Dybala', '1993-11-15', 'FORWARD', '', 177, 21, (SELECT id FROM team WHERE name = 'AS Roma'));
+INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, squad_number, team_id) VALUES (nextval('player_seq'), 'Paulo', 'Dybala', '1993-11-15', 'FORWARD', '/uploads/giocatori/2a438813-c0d5-4da0-80d4-7cefdab6bde9.jpg', 177, 21, (SELECT id FROM team WHERE name = 'AS Roma'));
 INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, squad_number, team_id) VALUES (nextval('player_seq'), 'Lorenzo', 'Pellegrini', '1996-06-19', 'MIDFIELDER', '', 186, 7, (SELECT id FROM team WHERE name = 'AS Roma'));
 INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, squad_number, team_id) VALUES (nextval('player_seq'), 'Gianluca', 'Mancini', '1996-04-17', 'DEFENDER', '', 190, 23, (SELECT id FROM team WHERE name = 'AS Roma'));
 INSERT INTO player (id, first_name, last_name, birth_date, role, photo, height, squad_number, team_id) VALUES (nextval('player_seq'), 'Mile', 'Svilar', '1999-08-27', 'GOALKEEPER', '', 189, 99, (SELECT id FROM team WHERE name = 'AS Roma'));

@@ -34,6 +34,9 @@ import it.uniroma3.siw.calcio.repository.UserRepository;
 @Component
 public class DemoDataSeeder implements ApplicationRunner {
 
+    private static final String AS_ROMA_LOGO = "/uploads/squadre/c6fc104f-4fb0-4e42-a782-2a8bf2397854.png";
+    private static final String PAULO_DYBALA_PHOTO = "/uploads/giocatori/2a438813-c0d5-4da0-80d4-7cefdab6bde9.jpg";
+
     private final boolean seedDemoData;
     private final String adminUsername;
     private final String adminPassword;
@@ -176,7 +179,7 @@ public class DemoDataSeeder implements ApplicationRunner {
 
     private Map<String, Team> seedTeams() {
         Map<String, Team> teams = new LinkedHashMap<>();
-        teams.put("AS Roma", team("AS Roma", 1927, "Roma"));
+        teams.put("AS Roma", team("AS Roma", 1927, "Roma", AS_ROMA_LOGO));
         teams.put("Inter", team("Inter", 1908, "Milano"));
         teams.put("Juventus", team("Juventus", 1897, "Torino"));
         teams.put("Milan", team("Milan", 1899, "Milano"));
@@ -187,15 +190,20 @@ public class DemoDataSeeder implements ApplicationRunner {
     }
 
     private Team team(String name, int foundationYear, String city) {
+        return team(name, foundationYear, city, null);
+    }
+
+    private Team team(String name, int foundationYear, String city, String logo) {
         Team team = new Team();
         team.setName(name);
         team.setFoundationYear(foundationYear);
         team.setCity(city);
+        team.setLogo(logo);
         return teamRepository.save(team);
     }
 
     private void seedPlayers(Map<String, Team> teams) {
-        player("Paulo", "Dybala", "1993-11-15", RoleSoccer.FORWARD, 177, 21, teams.get("AS Roma"));
+        player("Paulo", "Dybala", "1993-11-15", RoleSoccer.FORWARD, 177, 21, teams.get("AS Roma"), PAULO_DYBALA_PHOTO);
         player("Lorenzo", "Pellegrini", "1996-06-19", RoleSoccer.MIDFIELDER, 186, 7, teams.get("AS Roma"));
         player("Gianluca", "Mancini", "1996-04-17", RoleSoccer.DEFENDER, 190, 23, teams.get("AS Roma"));
         player("Mile", "Svilar", "1999-08-27", RoleSoccer.GOALKEEPER, 189, 99, teams.get("AS Roma"));
@@ -229,12 +237,24 @@ public class DemoDataSeeder implements ApplicationRunner {
             int height,
             int squadNumber,
             Team team) {
+        player(firstName, lastName, birthDate, role, height, squadNumber, team, "");
+    }
+
+    private void player(
+            String firstName,
+            String lastName,
+            String birthDate,
+            RoleSoccer role,
+            int height,
+            int squadNumber,
+            Team team,
+            String photo) {
         Player player = new Player();
         player.setFirstName(firstName);
         player.setLastName(lastName);
         player.setBirthDate(LocalDate.parse(birthDate));
         player.setRole(role);
-        player.setPhoto("");
+        player.setPhoto(photo);
         player.setHeight(height);
         player.setSquadNumber(squadNumber);
         player.setTeam(team);
