@@ -2,6 +2,7 @@ package it.uniroma3.siw.calcio.controller;
 
 import it.uniroma3.siw.calcio.service.CommentService;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,9 @@ public class MatchController {
 
     @GetMapping("/matches")
     public String getMatches(Model model) {
-        model.addAttribute("matches", matchService.findAllSortedByDateTime());
+        List<Match> matches = matchService.findAllSortedByDateTime();
+        model.addAttribute("matches", matches);
+        model.addAttribute("matchCenterMatches", buildMatchCenterMatches(matches));
         model.addAttribute("matchDateFormatter", MATCH_DATE_FORMATTER);
         model.addAttribute("matchTimeFormatter", MATCH_TIME_FORMATTER);
         return "match/list";
@@ -206,5 +209,61 @@ public class MatchController {
             return null;
         }
         return match.getTournament().getId();
+    }
+
+    // Converte le entity Match in DTO(Data Transfer Object) leggeri, pronti per essere serializzati nel match center React.
+    private List<MatchCenterMatch> buildMatchCenterMatches(List<Match> matches) {
+        return matches.stream()
+                .map(match -> new MatchCenterMatch(
+                        match.getId(),
+                        match.getDateTime() == null ? "" : match.getDateTime().format(MATCH_DATE_FORMATTER),
+                        match.getDateTime() == null ? "" : match.getDateTime().format(MATCH_TIME_FORMATTER),
+                        match.getDateTime() == null ? "" : match.getDateTime().toString(),
+                        match.getState() == null ? "SCHEDULED" : match.getState().name(),
+                        match.getVenue() == null ? "" : match.getVenue(),
+                        match.getTournament() == null ? null : match.getTournament().getId(),
+                        match.getTournament() == null ? "" : match.getTournament().getName(),
+                        refereeName(match),
+                        teamSummary(match.getHomeTeam()),
+                        teamSummary(match.getAwayTeam()),
+                        match.getGoalsHome(),
+                        match.getGoalsAway()))
+                .toList();
+    }
+
+    private TeamSummary teamSummary(Team team) {
+        if (team == null) {
+            return new TeamSummary(null, "", "/images/SiwCalcio_logo.png");
+        }
+        String logo = team.getLogo() == null || team.getLogo().isBlank()
+                ? "/images/SiwCalcio_logo.png"
+                : team.getLogo();
+        return new TeamSummary(team.getId(), team.getName(), logo);
+    }
+
+    private String refereeName(Match match) {
+        if (match == null || match.getReferee() == null) {
+            return "";
+        }
+        return match.getReferee().getFirstName() + " " + match.getReferee().getLastName();
+    }
+
+    public record MatchCenterMatch(
+            Long id,
+            String dateLabel,
+            String timeLabel,
+            String dateTime,
+            String state,
+            String venue,
+            Long tournamentId,
+            String tournamentName,
+            String refereeName,
+            TeamSummary homeTeam,
+            TeamSummary awayTeam,
+            int goalsHome,
+            int goalsAway) {
+    }
+
+    public record TeamSummary(Long id, String name, String logo) {
     }
 }

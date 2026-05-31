@@ -13,7 +13,9 @@
         <main class="content">
             <h1>Matches</h1>
 
-            <div class="match-calendar" th:if="${not #lists.isEmpty(matches)}">
+            <div id="match-center-root"></div>
+
+            <div class="match-fallback match-calendar" th:if="${not #lists.isEmpty(matches)}">
                 <article class="match-row match-row-manageable" th:each="match : ${matches}">
                     <div class="match-date">
                         <span class="match-day" th:text="${match.dateTime.format(matchDateFormatter)}">lunedi 1 giugno</span>
@@ -56,7 +58,7 @@
                 </article>
             </div>
 
-            <p class="empty-state" th:if="${#lists.isEmpty(matches)}">No matches are currently available.</p>
+            <p class="match-fallback empty-state" th:if="${#lists.isEmpty(matches)}">No matches are currently available.</p>
 
             <div class="actions detail-actions">
                 <a th:replace="~{components :: backHomeButton}"></a>
@@ -67,5 +69,17 @@
             </div>
         </main>
     </div>
+    <script th:inline="javascript">
+        window.SIW_MATCH_CENTER = {
+            matches: /*[[${matchCenterMatches}]]*/ [],
+            isAdmin: /*[[${isAdmin}]]*/ false,
+            contextPath: /*[[@{/}]]*/ "/",
+            csrf: {
+                parameterName: /*[[${isAdmin ? _csrf.parameterName : ''}]]*/ "",
+                token: /*[[${isAdmin ? _csrf.token : ''}]]*/ ""
+            }
+        };
+    </script>
+    <script type="module" th:src="@{/js/react/match-center.js}"></script>
 </body>
 </html>
