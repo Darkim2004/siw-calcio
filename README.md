@@ -1,133 +1,133 @@
 # SIW Calcio
 
-SIW Calcio e' una web application per la gestione e consultazione di un portale calcistico. Il progetto permette di vedere squadre, giocatori, tornei e partite, con una sezione amministrativa per inserire e modificare i dati del dominio.
+SIW Calcio is a web application for managing and browsing a football portal. The project lets users view teams, players, tournaments, and matches, while administrators can create and update the main domain data.
 
-L'applicazione e' sviluppata in Java con Spring Boot, usa PostgreSQL come database relazionale, Thymeleaf per le viste server-side e Docker per l'esecuzione containerizzata. In produzione e' pensata per essere deployata su Azure App Service, con Azure Database for PostgreSQL e Azure Blob Storage per le immagini.
+The application is built with Java and Spring Boot, uses PostgreSQL as its relational database, Thymeleaf for server-side views, and Docker for containerized execution. In production, it is designed to run on Azure App Service with Azure Database for PostgreSQL and Azure Blob Storage for uploaded images.
 
-## Funzionalita principali
+## Main Features
 
-- Home page con partite e contenuti principali del portale.
-- Lista e dettaglio di squadre, con rosa giocatori e logo.
-- Lista e dettaglio di tornei, con squadre partecipanti e classifiche/punteggi.
-- Lista e dettaglio delle partite, con stato, risultato, squadre, torneo e arbitro.
-- Registrazione e login utenti.
-- Commenti sulle partite per utenti autenticati.
-- Area admin per creare, modificare ed eliminare squadre, giocatori, tornei, partite e arbitri.
-- Upload immagini per loghi squadre e foto giocatori.
+- Home page with highlighted matches and portal content.
+- Team list and team detail pages, including squad and logo.
+- Tournament list and tournament detail pages, including participating teams and points.
+- Match list and match detail pages, including status, score, teams, tournament, venue, and referee.
+- User registration and login.
+- Authenticated user comments on matches.
+- Admin area for creating, editing, and deleting teams, players, tournaments, matches, and referees.
+- Image uploads for team logos and player photos.
 
-## Tecnologie
+## Tech Stack
 
-| Area | Tecnologia |
+| Area | Technology |
 | --- | --- |
-| Linguaggio | Java 17 |
+| Language | Java 17 |
 | Framework | Spring Boot 4 |
 | Web MVC | Spring Web MVC |
 | Template engine | Thymeleaf |
-| Persistenza | Spring Data JPA, Hibernate |
+| Persistence | Spring Data JPA, Hibernate |
 | Database | PostgreSQL |
-| Sicurezza | Spring Security, BCrypt |
-| Validazione | Spring Validation |
-| Storage immagini | File system locale in sviluppo, Azure Blob Storage in produzione |
-| Container | Docker, Docker Compose |
+| Security | Spring Security, BCrypt |
+| Validation | Spring Validation |
+| Image storage | Local file system in development, Azure Blob Storage in production |
+| Containers | Docker, Docker Compose |
 | Cloud | Azure App Service, Azure Database for PostgreSQL, Azure Blob Storage |
 | Build | Maven Wrapper |
 
-## Come funziona il progetto
+## Project Structure
 
-Il progetto segue una struttura tipica Spring MVC:
+The project follows a typical Spring MVC structure:
 
 ```text
 src/main/java/it/uniroma3/siw/calcio
-|-- authentication   # Configurazione Spring Security
-|-- config           # Configurazioni app, storage locale, Azure Blob, dati demo
-|-- controller       # Controller MVC e routing HTTP
-|-- exception        # Gestione errori applicativi
-|-- model            # Entita JPA del dominio
-|-- repository       # Repository Spring Data JPA
-`-- service          # Logica applicativa
+|-- authentication   # Spring Security configuration
+|-- config           # App, local storage, Azure Blob, and demo data configuration
+|-- controller       # MVC controllers and HTTP routing
+|-- exception        # Application error handling
+|-- model            # JPA domain entities
+|-- repository       # Spring Data JPA repositories
+`-- service          # Application business logic
 ```
 
-Le pagine HTML sono in `src/main/resources/templates`, mentre CSS, font e immagini statiche sono in `src/main/resources/static`.
+HTML pages are stored in `src/main/resources/templates`, while CSS, fonts, and static images are stored in `src/main/resources/static`.
 
-Il dominio principale e' composto da:
+The main domain model includes:
 
-- `Team`: squadra, citta, anno di fondazione, logo e rosa.
-- `Player`: giocatore, ruolo, numero, altezza, data di nascita, foto e squadra.
-- `Tournament`: torneo con anno, descrizione e partecipazioni.
-- `Partecipation`: associazione tra squadra e torneo, con punteggio.
-- `Match`: partita tra due squadre, torneo, arbitro, risultato, stato e sede.
-- `Referee`: arbitro.
-- `Comment`: commento utente su una partita.
-- `User`: utente applicativo con ruolo `ROLE_USER` o `ROLE_ADMIN`.
+- `Team`: football team, city, foundation year, logo, and squad.
+- `Player`: player profile, role, squad number, height, birth date, photo, and team.
+- `Tournament`: tournament with year, description, and team participations.
+- `Partecipation`: association between a team and a tournament, including points.
+- `Match`: match between two teams, with tournament, referee, score, state, and venue.
+- `Referee`: match referee.
+- `Comment`: user comment on a match.
+- `User`: application user with either `ROLE_USER` or `ROLE_ADMIN`.
 
-## Profili e storage immagini
+## Profiles and Image Storage
 
-L'app usa due strategie di storage per le immagini:
+The application uses two image storage strategies:
 
-- Profilo non `prod`: `LocalImageStorageService` salva i file nella cartella `uploads/` e li espone tramite `/uploads/**`.
-- Profilo `prod`: `AzureBlobImageStorageService` carica le immagini su Azure Blob Storage e salva nel database l'URL pubblico del blob.
+- Non-`prod` profile: `LocalImageStorageService` stores files under the local `uploads/` directory and exposes them through `/uploads/**`.
+- `prod` profile: `AzureBlobImageStorageService` uploads images to Azure Blob Storage and stores the public blob URL in the database.
 
-Sono accettate immagini `.jpg`, `.jpeg`, `.png` e `.webp`, con limite configurato a `5MB`.
+Accepted image formats are `.jpg`, `.jpeg`, `.png`, and `.webp`, with a configured upload limit of `5MB`.
 
-In produzione il container Azure Blob configurato viene creato automaticamente se non esiste, ma il livello di accesso pubblico va impostato su Azure. Per l'uso attuale del progetto il container deve consentire la lettura pubblica dei singoli blob, perche' i template Thymeleaf renderizzano direttamente gli URL delle immagini nei tag `<img>`.
+In production, the configured Azure Blob container is created automatically if it does not already exist. The public access level must still be configured in Azure. With the current application design, the container must allow public read access to individual blobs because Thymeleaf templates render image URLs directly inside `<img>` tags.
 
-## Prerequisiti
+## Prerequisites
 
 - Java 17
-- Docker e Docker Compose
-- PostgreSQL, se si avvia l'app senza Docker
-- Un account Azure, per il deploy cloud
+- Docker and Docker Compose
+- PostgreSQL, if running without Docker
+- An Azure account, for cloud deployment
 
-## Configurazione ambiente
+## Environment Configuration
 
-Per Docker Compose parti dal file di esempio:
+For Docker Compose, start from the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Poi valorizza almeno:
+Then configure at least:
 
 ```text
 POSTGRES_DB=calcio
 POSTGRES_USER=calcio
-POSTGRES_PASSWORD=<password-db-locale>
+POSTGRES_PASSWORD=<local-db-password>
 APP_ADMIN_USERNAME=admin
-APP_ADMIN_PASSWORD=<password-admin>
-AZURE_STORAGE_CONNECTION_STRING=<connection-string-azure-storage>
+APP_ADMIN_PASSWORD=<admin-password>
+AZURE_STORAGE_CONNECTION_STRING=<azure-storage-connection-string>
 AZURE_STORAGE_CONTAINER_NAME=images
 SPRING_PROFILES_ACTIVE=prod
 ```
 
-Il file `.env` contiene segreti locali e non deve essere committato.
+The `.env` file contains local secrets and must not be committed.
 
-## Avvio con Docker Compose
+## Running With Docker Compose
 
-Il `docker-compose.yml` avvia:
+The `docker-compose.yml` file starts:
 
-- un container PostgreSQL 16;
-- il container dell'app Spring Boot;
-- un volume persistente per i dati PostgreSQL.
+- a PostgreSQL 16 container;
+- the Spring Boot application container;
+- a persistent volume for PostgreSQL data.
 
-Avvio:
+Start the stack with:
 
 ```bash
 docker compose up --build
 ```
 
-L'app sara' disponibile su:
+The application will be available at:
 
 ```text
 http://localhost:8080
 ```
 
-PostgreSQL viene esposto sulla porta locale `5433`.
+PostgreSQL is exposed locally on port `5433`.
 
-Nota: il compose usa `SPRING_PROFILES_ACTIVE=prod`, quindi richiede una connection string Azure Blob valida. Se vuoi sviluppare senza Azure Blob, avvia l'app con il profilo default e usa lo storage locale in `uploads/`.
+Note: the Compose setup uses `SPRING_PROFILES_ACTIVE=prod`, so it requires a valid Azure Blob Storage connection string. If you want to develop without Azure Blob Storage, run the application with the default profile and use local storage under `uploads/`.
 
-## Avvio locale senza Docker
+## Running Locally Without Docker
 
-Assicurati di avere PostgreSQL attivo e un database raggiungibile. La configurazione default usa:
+Make sure PostgreSQL is running and reachable. The default configuration uses:
 
 ```text
 SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/calcio
@@ -135,116 +135,109 @@ SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=postgres
 ```
 
-Puoi sovrascrivere queste variabili dal terminale o dall'IDE.
+You can override these variables from your terminal or IDE.
 
-Avvio:
+Start the application:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Su Windows:
+On Windows:
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-Con il profilo default, gli upload vengono salvati nella cartella locale `uploads/`.
+With the default profile, uploaded images are saved in the local `uploads/` directory.
 
-## Dati demo e utente admin
+## Demo Data and Admin User
 
-L'app puo' creare o aggiornare un utente admin all'avvio se `APP_ADMIN_PASSWORD` e' valorizzata.
+The application can create or update an admin user on startup when `APP_ADMIN_PASSWORD` is set.
 
-Per popolare dati dimostrativi:
+To seed demo data:
 
 ```text
 APP_SEED_DEMO_DATA=true
 APP_ADMIN_USERNAME=admin
-APP_ADMIN_PASSWORD=<password-admin>
+APP_ADMIN_PASSWORD=<admin-password>
 ```
 
-Il seeding demo viene eseguito solo se le tabelle principali del dominio sono vuote.
+Demo seeding runs only when the main domain tables are empty.
 
-In sviluppo con `ddl-auto=create`, Hibernate puo' usare anche `src/main/resources/import.sql` per caricare dati iniziali.
+During development with `ddl-auto=create`, Hibernate can also use `src/main/resources/import.sql` to load initial data.
 
-## Test e build
+## Tests and Build
 
-Eseguire i test:
+Run tests:
 
 ```bash
 ./mvnw test
 ```
 
-Su Windows:
+On Windows:
 
 ```powershell
 .\mvnw.cmd test
 ```
 
-Creare il jar:
+Build the jar:
 
 ```bash
 ./mvnw clean package
 ```
 
-Il Dockerfile usa una build multi-stage:
+The Dockerfile uses a multi-stage build:
 
-1. immagine `eclipse-temurin:17-jdk` per compilare il progetto;
-2. immagine `eclipse-temurin:17-jre` per eseguire il jar finale.
+1. `eclipse-temurin:17-jdk` compiles the project;
+2. `eclipse-temurin:17-jre` runs the final jar.
 
-## Deploy su Azure
+## Azure Deployment
 
-La configurazione di produzione e' in `src/main/resources/application-prod.properties`.
+Production configuration lives in `src/main/resources/application-prod.properties`.
 
-Il deploy previsto usa:
+The intended Azure deployment uses:
 
-- Azure App Service per eseguire l'app Java/Spring Boot o il container Docker.
-- Azure Database for PostgreSQL come database applicativo.
-- Azure Blob Storage per loghi squadre e foto giocatori.
+- Azure App Service to run the Java/Spring Boot app or Docker container.
+- Azure Database for PostgreSQL as the application database.
+- Azure Blob Storage for team logos and player photos.
 
-Nelle Environment variables della Web App Azure imposta:
+Set the following environment variables in the Azure Web App:
 
 ```text
 SPRING_PROFILES_ACTIVE=prod
-SPRING_DATASOURCE_URL=<jdbc-url-azure-postgres>
-SPRING_DATASOURCE_USERNAME=<utente-postgres>
-SPRING_DATASOURCE_PASSWORD=<password-postgres>
+SPRING_DATASOURCE_URL=<azure-postgres-jdbc-url>
+SPRING_DATASOURCE_USERNAME=<postgres-user>
+SPRING_DATASOURCE_PASSWORD=<postgres-password>
 SPRING_JPA_HIBERNATE_DDL_AUTO=update
-AZURE_STORAGE_CONNECTION_STRING=<connection-string-storage-account>
+AZURE_STORAGE_CONNECTION_STRING=<storage-account-connection-string>
 AZURE_STORAGE_CONTAINER_NAME=images
 APP_ADMIN_USERNAME=admin
-APP_ADMIN_PASSWORD=<password-admin>
+APP_ADMIN_PASSWORD=<admin-password>
 APP_SEED_DEMO_DATA=false
 ```
 
-Azure App Service espone la porta tramite `WEBSITES_PORT`; l'app supporta anche `PORT` come fallback.
+Azure App Service exposes the port through `WEBSITES_PORT`; the application also supports `PORT` as a fallback.
 
 ## Azure Blob Storage
 
-Per lo storage immagini crea uno Storage Account e un container, ad esempio `images`.
+For image storage, create a Storage Account and a container, for example `images`.
 
-Impostazioni consigliate:
+The application reads the storage connection string from `AZURE_STORAGE_CONNECTION_STRING`. Never store this value in the repository.
 
-- Performance: `Standard`
-- Redundancy: `LRS` per costi ridotti, oppure `ZRS` per maggiore resilienza regionale
-- Public access: abilitato sullo Storage Account
-- Container access level: `Blob`
+More details are available in [docs/azure-blob-storage.md](docs/azure-blob-storage.md).
 
-L'app usa la connection string tramite `AZURE_STORAGE_CONNECTION_STRING`. Non salvare mai questa stringa nel repository.
+## Security
 
-Guida piu' dettagliata: [docs/azure-blob-storage.md](docs/azure-blob-storage.md).
+Spring Security manages authentication and authorization:
 
-## Sicurezza
+- public pages: home, login, registration, teams, tournaments, matches, and static assets;
+- comments: available to authenticated users;
+- `/admin/**`: restricted to users with `ROLE_ADMIN`;
+- passwords are stored with BCrypt.
 
-Spring Security gestisce autenticazione e autorizzazione:
+## Operational Notes
 
-- pagine pubbliche: home, login, registrazione, squadre, tornei, partite e asset statici;
-- commenti: disponibili agli utenti autenticati;
-- area `/admin/**`: accessibile solo a utenti con ruolo `ROLE_ADMIN`;
-- password salvate con BCrypt.
-
-## Note operative
-
-- Gli upload locali sono ignorati da Git tramite `uploads/`.
-- I segreti devono stare in `.env` locale o nelle Environment variables di Azure.
-- In produzione evita `ddl-auto=create`; usa `update` solo per deploy semplici o una strategia di migrazione dedicata per ambienti piu' strutturati.
+- Local uploads are ignored by Git through `uploads/`.
+- Secrets must be stored in a local `.env` file or in Azure environment variables.
+- Avoid `ddl-auto=create` in production. Use `update` only for simple deployments, or introduce a dedicated migration strategy for more structured environments.
