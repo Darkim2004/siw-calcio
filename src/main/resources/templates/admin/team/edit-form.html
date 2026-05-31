@@ -35,7 +35,8 @@
                 <form class="auth-form"
                       th:action="@{/admin/teams/{id}(id=${team.id})}"
                       th:object="${team}"
-                      method="post">
+                      method="post"
+                      enctype="multipart/form-data">
                     <input th:replace="~{components :: csrfInput}">
 
                     <div class="form-grid">
@@ -57,9 +58,16 @@
                             <span class="field-error" th:if="${#fields.hasErrors('foundationYear')}" th:errors="*{foundationYear}">Foundation year error</span>
                         </div>
 
+                        <div class="form-field form-field-wide" th:if="${!#strings.isEmpty(team.logo)}">
+                            <label>Current logo</label>
+                            <img class="logo-preview"
+                                 th:src="@{${team.logo}}"
+                                 th:alt="|Logo ${team.name}|">
+                        </div>
+
                         <div class="form-field">
-                            <label for="logo">Logo path</label>
-                            <input id="logo" type="text" th:field="*{logo}" placeholder="/images/team-logo.png">
+                            <label for="logoFile">Logo</label>
+                            <input id="logoFile" type="file" name="logoFile" accept="image/png,image/jpeg,image/webp">
                             <span class="field-error" th:if="${#fields.hasErrors('logo')}" th:errors="*{logo}">Logo error</span>
                         </div>
                     </div>

@@ -13,7 +13,7 @@
         <main class="card">
             <h1>New team</h1>
 
-            <form class="auth-form" th:action="@{/admin/teams}" th:object="${team}" method="post">
+            <form class="auth-form" th:action="@{/admin/teams}" th:object="${team}" method="post" enctype="multipart/form-data">
                 <input th:replace="~{components :: csrfInput}">
 
                 <div class="form-field">
@@ -35,8 +35,8 @@
                 </div>
 
                 <div class="form-field">
-                    <label for="logo">Logo path</label>
-                    <input id="logo" type="text" th:field="*{logo}" placeholder="/images/team-logo.png">
+                    <label for="logoFile">Logo</label>
+                    <input id="logoFile" type="file" name="logoFile" accept="image/png,image/jpeg,image/webp">
                     <span class="field-error" th:if="${#fields.hasErrors('logo')}" th:errors="*{logo}">Logo error</span>
                 </div>
 

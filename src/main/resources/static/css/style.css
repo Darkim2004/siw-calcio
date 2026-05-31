@@ -286,6 +286,25 @@ h2 {
     font-weight: 700;
 }
 
+.logo-preview {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+}
+
+.photo-preview {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+}
+
 .auth-submit {
     width: 100%;
     border: 0;

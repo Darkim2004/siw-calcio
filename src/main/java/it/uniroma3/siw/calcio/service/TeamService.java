@@ -1,13 +1,13 @@
 package it.uniroma3.siw.calcio.service;
 
 import it.uniroma3.siw.calcio.repository.MatchRepository;
-import it.uniroma3.siw.calcio.repository.PartecipationRepository;
 import it.uniroma3.siw.calcio.repository.PlayerRepository;
 import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import it.uniroma3.siw.calcio.model.Match;
 import it.uniroma3.siw.calcio.model.Player;
@@ -17,14 +17,18 @@ import it.uniroma3.siw.calcio.repository.TeamRepository;
 @Service
 public class TeamService {
 
+    private static final String TEAM_LOGO_FOLDER = "squadre";
+
+    private final ImageStorageService imageStorageService;
     private final PlayerRepository playerRepository;
     private final TeamRepository teamRepository;
     private final MatchRepository matchRepository;
 
-    public TeamService(TeamRepository teamRepository, PlayerRepository playerRepository, PartecipationRepository partecipationRepository, MatchRepository matchRepository) {
+    public TeamService(TeamRepository teamRepository, PlayerRepository playerRepository, MatchRepository matchRepository, ImageStorageService imageStorageService) {
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
         this.matchRepository = matchRepository;
+        this.imageStorageService = imageStorageService;
     }
 
     @Transactional(readOnly = true)
@@ -48,6 +52,27 @@ public class TeamService {
 
     @Transactional
     public Team save(Team team) {
+        return this.teamRepository.save(team);
+    }
+
+    @Transactional
+    public Team create(Team team, MultipartFile logoFile) {
+        updateLogoIfPresent(team, logoFile);
+        return this.teamRepository.save(team);
+    }
+
+    @Transactional
+    public Team update(Long id, Team formTeam, MultipartFile logoFile) {
+        Team team = this.findById(id);
+        if (team == null) {
+            return null;
+        }
+
+        team.setName(formTeam.getName());
+        team.setFoundationYear(formTeam.getFoundationYear());
+        team.setCity(formTeam.getCity());
+        updateLogoIfPresent(team, logoFile);
+
         return this.teamRepository.save(team);
     }
 
@@ -87,6 +112,18 @@ public class TeamService {
             this.matchRepository.delete(match);
         }
 
+        this.imageStorageService.delete(team.getLogo());
         this.teamRepository.deleteById(id);
+    }
+
+    private void updateLogoIfPresent(Team team, MultipartFile logoFile) {
+        if (logoFile == null || logoFile.isEmpty()) {
+            return;
+        }
+
+        String oldLogo = team.getLogo();
+        String newLogo = this.imageStorageService.store(logoFile, TEAM_LOGO_FOLDER);
+        team.setLogo(newLogo);
+        this.imageStorageService.delete(oldLogo);
     }
 }

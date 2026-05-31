@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import it.uniroma3.siw.calcio.model.Player;
@@ -61,13 +63,21 @@ public class TeamController {
     }
 
     @PostMapping("/admin/teams")
-    public String createTeam(@Valid @ModelAttribute("team") Team team, BindingResult bindingResult, Model model) {
+    public String createTeam(@Valid @ModelAttribute("team") Team team, BindingResult bindingResult,
+                             @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
+                             Model model) {
         if (bindingResult.hasErrors()) {
             addTeamFormAttributes(model);
             return "admin/team/form";
         }
 
-        teamService.save(team);
+        try {
+            teamService.create(team, logoFile);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("logo", "error.team", e.getMessage());
+            addTeamFormAttributes(model);
+            return "admin/team/form";
+        }
         return "redirect:/teams";
     }
 
@@ -84,24 +94,28 @@ public class TeamController {
     }
 
     @PostMapping("/admin/teams/{id}")
-    public String updateTeam(@PathVariable Long id, @Valid @ModelAttribute("team") Team formTeam, BindingResult bindingResult, Model model) {
-        formTeam.setId(id);
-        if (bindingResult.hasErrors()) {
-            addTeamEditAttributes(model, formTeam);
-            return "admin/team/edit-form";
-        }
-
+    public String updateTeam(@PathVariable Long id, @Valid @ModelAttribute("team") Team formTeam, BindingResult bindingResult,
+                             @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
+                             Model model) {
         Team team = teamService.findById(id);
         if (team == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        team.setName(formTeam.getName());
-        team.setFoundationYear(formTeam.getFoundationYear());
-        team.setCity(formTeam.getCity());
-        team.setLogo(formTeam.getLogo());
+        formTeam.setId(id);
+        formTeam.setLogo(team.getLogo());
+        if (bindingResult.hasErrors()) {
+            addTeamEditAttributes(model, formTeam);
+            return "admin/team/edit-form";
+        }
 
-        teamService.save(team);
+        try {
+            teamService.update(id, formTeam, logoFile);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("logo", "error.team", e.getMessage());
+            addTeamEditAttributes(model, formTeam);
+            return "admin/team/edit-form";
+        }
         return "redirect:/teams";
     }
 
