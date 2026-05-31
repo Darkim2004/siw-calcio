@@ -17,7 +17,8 @@
             <form class="auth-form"
                   th:action="@{${formAction}}"
                   th:object="${player}"
-                  method="post">
+                  method="post"
+                  enctype="multipart/form-data">
                 <input th:replace="~{components :: csrfInput}">
 
                 <div class="alert alert-error" th:if="${#fields.hasGlobalErrors()}">
@@ -78,9 +79,16 @@
                     </div>
                 </div>
 
+                <div class="form-field form-field-wide" th:if="${!#strings.isEmpty(player.photo)}">
+                    <label>Current photo</label>
+                    <img class="photo-preview"
+                         th:src="@{${player.photo}}"
+                         th:alt="|Foto ${player.firstName} ${player.lastName}|">
+                </div>
+
                 <div class="form-field">
-                    <label for="photo">Photo path</label>
-                    <input id="photo" type="text" th:field="*{photo}" placeholder="/images/player-photo.png">
+                    <label for="photoFile">Photo</label>
+                    <input id="photoFile" type="file" name="photoFile" accept="image/png,image/jpeg,image/webp">
                     <span class="field-error" th:if="${#fields.hasErrors('photo')}" th:errors="*{photo}">Photo error</span>
                 </div>
 

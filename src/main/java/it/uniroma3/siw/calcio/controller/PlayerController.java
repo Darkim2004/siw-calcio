@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import it.uniroma3.siw.calcio.model.Player;
@@ -50,6 +51,7 @@ public class PlayerController {
     public String createPlayer(@Valid @ModelAttribute("player") Player player,
                                BindingResult bindingResult,
                                @RequestParam(required = false) Long teamId,
+                               @RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
                                Model model) {
         setPlayerTeam(player, teamId, bindingResult);
 
@@ -58,7 +60,13 @@ public class PlayerController {
             return "admin/player/form";
         }
 
-        playerService.save(player);
+        try {
+            playerService.save(player, photoFile);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("photo", "error.player", e.getMessage());
+            addGlobalPlayerFormAttributes(model, "/admin/players", "/admin/players", "New player", "Create player");
+            return "admin/player/form";
+        }
         return "redirect:/admin/players";
     }
 
@@ -79,8 +87,15 @@ public class PlayerController {
                                @Valid @ModelAttribute("player") Player formPlayer,
                                BindingResult bindingResult,
                                @RequestParam(required = false) Long teamId,
+                               @RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
                                Model model) {
+        Player player = playerService.findById(id);
+        if (player == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
         formPlayer.setId(id);
+        formPlayer.setPhoto(player.getPhoto());
         setPlayerTeam(formPlayer, teamId, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -88,14 +103,15 @@ public class PlayerController {
             return "admin/player/edit-form";
         }
 
-        Player player = playerService.findById(id);
-        if (player == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
         copyPlayerFields(player, formPlayer);
         player.setTeam(formPlayer.getTeam());
-        playerService.save(player);
+        try {
+            playerService.save(player, photoFile);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("photo", "error.player", e.getMessage());
+            addGlobalPlayerFormAttributes(model, "/admin/players/" + id, "/admin/players", "Edit player", "Save changes");
+            return "admin/player/edit-form";
+        }
         return "redirect:/admin/players";
     }
 
@@ -165,6 +181,7 @@ public class PlayerController {
     public String createTeamPlayer(@PathVariable("id") Long teamId,
                                    @Valid @ModelAttribute("player") Player player,
                                    BindingResult bindingResult,
+                                   @RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
                                    Model model) {
         Team team = teamService.findById(teamId);
         if (team == null) {
@@ -178,7 +195,14 @@ public class PlayerController {
         }
 
         player.setTeam(team);
-        playerService.save(player);
+        try {
+            playerService.save(player, photoFile);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("photo", "error.player", e.getMessage());
+            addTeamPlayerFormAttributes(model, team, "/admin/teams/" + teamId + "/players",
+                    "/admin/teams/" + teamId + "/edit", "New player", "Create player");
+            return "admin/player/form";
+        }
         return "redirect:/admin/teams/" + teamId + "/edit";
     }
 
@@ -199,24 +223,29 @@ public class PlayerController {
                                    @PathVariable Long playerId,
                                    @Valid @ModelAttribute("player") Player formPlayer,
                                    BindingResult bindingResult,
+                                   @RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
                                    Model model) {
         Team team = teamService.findById(teamId);
-        if (team == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        Player player = playerService.findById(playerId);
+        validateTeamPlayer(team, player, teamId);
 
         formPlayer.setId(playerId);
+        formPlayer.setPhoto(player.getPhoto());
         if (bindingResult.hasErrors()) {
             addTeamPlayerFormAttributes(model, team, "/admin/teams/" + teamId + "/players/" + playerId,
                     "/admin/teams/" + teamId + "/edit", "Edit player", "Save changes");
             return "admin/player/edit-form";
         }
 
-        Player player = playerService.findById(playerId);
-        validateTeamPlayer(team, player, teamId);
-
         copyPlayerFields(player, formPlayer);
-        playerService.save(player);
+        try {
+            playerService.save(player, photoFile);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("photo", "error.player", e.getMessage());
+            addTeamPlayerFormAttributes(model, team, "/admin/teams/" + teamId + "/players/" + playerId,
+                    "/admin/teams/" + teamId + "/edit", "Edit player", "Save changes");
+            return "admin/player/edit-form";
+        }
         return "redirect:/admin/teams/" + teamId + "/edit";
     }
 

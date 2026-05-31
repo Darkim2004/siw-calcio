@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import it.uniroma3.siw.calcio.model.Player;
 import it.uniroma3.siw.calcio.model.RoleSoccer;
@@ -14,10 +15,14 @@ import it.uniroma3.siw.calcio.repository.PlayerRepository;
 @Service
 public class PlayerService {
 
-    private final PlayerRepository playerRepository;
+    private static final String PLAYER_PHOTO_FOLDER = "giocatori";
 
-    public PlayerService(PlayerRepository playerRepository) {
+    private final PlayerRepository playerRepository;
+    private final ImageStorageService imageStorageService;
+
+    public PlayerService(PlayerRepository playerRepository, ImageStorageService imageStorageService) {
         this.playerRepository = playerRepository;
+        this.imageStorageService = imageStorageService;
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +53,14 @@ public class PlayerService {
     }
 
     @Transactional
+    public Player save(Player player, MultipartFile photoFile) {
+        updatePhotoIfPresent(player, photoFile);
+        return playerRepository.save(player);
+    }
+
+    @Transactional
     public void delete(Player player) {
+        imageStorageService.delete(player.getPhoto());
         playerRepository.delete(player);
     }
 
@@ -68,5 +80,16 @@ public class PlayerService {
         return players.stream()
                 .filter(player -> role.equals(player.getRole()))
                 .toList();
+    }
+
+    private void updatePhotoIfPresent(Player player, MultipartFile photoFile) {
+        if (photoFile == null || photoFile.isEmpty()) {
+            return;
+        }
+
+        String oldPhoto = player.getPhoto();
+        String newPhoto = imageStorageService.store(photoFile, PLAYER_PHOTO_FOLDER);
+        player.setPhoto(newPhoto);
+        imageStorageService.delete(oldPhoto);
     }
 }
